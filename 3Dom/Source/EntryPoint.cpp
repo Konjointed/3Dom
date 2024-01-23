@@ -1,6 +1,8 @@
 #include <iostream>
 
-int main() {
-	std::cout << "Hello World\n";
-	return 0;
+#include "Game.h"
+
+int main(int argc, char* argv[]) {
+	Game& game = Game::get();
+	return game.run("Graphics Engine", 1280, 720, true);
 }
