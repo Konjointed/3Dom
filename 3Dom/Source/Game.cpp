@@ -2,14 +2,20 @@
 
 #include <iostream>
 
+#include "EntityManager.h"
+
+EntityManager gEntityManager;
+
 int Game::run(const char* title, int width, int height, bool fullscreen)
 {
 	if (!startup(title, width, height, fullscreen)) {
-		std::cout << "Game failed to initialize\n";
+		std::cout << "Game failed to start up\n";
 		return -1;
 	}
 
 	glEnable(GL_DEPTH_TEST);
+
+
 
 	float lastFrameTime = 0.0f;
 	while (!quit) {
@@ -47,8 +53,7 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 {
 	return loadSDL(title, width, height, fullscreen) &&
 		loadResources() &&
-		loadSubsystems() &&
-		loadSystems();
+		loadSubsystems();
 }
 
 void Game::shutdown()
@@ -162,11 +167,6 @@ bool Game::loadResources()
 }
 
 bool Game::loadSubsystems()
-{
-	return true;
-}
-
-bool Game::loadSystems()
 {
 	return true;
 }

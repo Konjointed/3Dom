@@ -25,8 +25,7 @@ private:
 
 	bool loadSDL(const char* title, int width, int height, bool fullscreen);
 	bool loadResources();
-	bool loadSubsystems(); // Non ECS Systems?
-	bool loadSystems(); // ECS Systems
+	bool loadSubsystems();
 private:
 	bool quit = false;
 	SDL_Window* window = nullptr;
