@@ -5,6 +5,10 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+#include "EntityManager.h"
+
+extern EntityManager gEntityManager;
+
 class Game {
 public:
 	static Game& get() {

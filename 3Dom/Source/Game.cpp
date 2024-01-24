@@ -2,10 +2,6 @@
 
 #include <iostream>
 
-#include "EntityManager.h"
-
-EntityManager gEntityManager;
-
 int Game::run(const char* title, int width, int height, bool fullscreen)
 {
 	if (!startup(title, width, height, fullscreen)) {
@@ -14,8 +10,6 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 	}
 
 	glEnable(GL_DEPTH_TEST);
-
-
 
 	float lastFrameTime = 0.0f;
 	while (!quit) {
@@ -58,6 +52,8 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 
 void Game::shutdown()
 {
+	gEntityManager.shutDown();
+
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
@@ -168,5 +164,5 @@ bool Game::loadResources()
 
 bool Game::loadSubsystems()
 {
-	return true;
+	return gEntityManager.startUp();
 }

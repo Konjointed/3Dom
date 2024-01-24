@@ -13,6 +13,9 @@
 
 class EntityManager {
 public:
+	bool startUp();
+	void shutDown();
+
 	void update(float timestep);
 
 	Entity createEntity(const std::string& name);

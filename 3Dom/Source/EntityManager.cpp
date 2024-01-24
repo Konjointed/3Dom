@@ -1,6 +1,21 @@
 #include "EntityManager.h"
 
+#include <iostream>
+
 #include "Components.h"
+
+EntityManager gEntityManager;
+
+bool EntityManager::startUp()
+{
+	std::cout << "EntityManager::startUp()\n";
+	return false;
+}
+
+void EntityManager::shutDown()
+{
+	std::cout << "EntityManager::shutDown()\n";
+}
 
 void EntityManager::update(float timestep)
 {
