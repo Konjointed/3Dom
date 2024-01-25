@@ -139,7 +139,12 @@
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\EntryPoint.cpp" />
     <ClCompile Include="Source\Game.cpp" />
-    <ClCompile Include="Source\RenderSystem.cpp" />
+    <ClCompile Include="Source\Mesh.cpp" />
+    <ClCompile Include="Source\RenderingPipeline.cpp" />
+    <ClCompile Include="Source\Resources.cpp" />
+    <ClCompile Include="Source\ShaderProgram.cpp" />
+    <ClCompile Include="Source\SimulationManager.cpp" />
+    <ClCompile Include="Source\Systems\MeshRenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Component.h" />
@@ -147,8 +152,17 @@
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\Game.h" />
-    <ClInclude Include="Source\RenderSystem.h" />
+    <ClInclude Include="Source\Mesh.h" />
+    <ClInclude Include="Source\RenderingPipeline.h" />
+    <ClInclude Include="Source\Resources.h" />
+    <ClInclude Include="Source\ShaderProgram.h" />
+    <ClInclude Include="Source\SimulationManager.h" />
     <ClInclude Include="Source\System.h" />
+    <ClInclude Include="Source\Systems\MeshRenderSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Shaders\default.frag" />
+    <None Include="Resources\Shaders\default.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

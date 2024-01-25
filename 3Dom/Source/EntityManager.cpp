@@ -3,13 +3,12 @@
 #include <iostream>
 
 #include "Components.h"
+#include "Systems/MeshRenderSystem.h"
 
-EntityManager gEntityManager;
-
-bool EntityManager::startUp()
+void EntityManager::startUp()
 {
 	std::cout << "EntityManager::startUp()\n";
-	return false;
+	registerSystem<MeshRenderSystem>();
 }
 
 void EntityManager::shutDown()
@@ -31,8 +30,8 @@ Entity EntityManager::createEntity(const std::string& name)
 
 	Entity newEntity(entityId);
 
-	addComponent<Transform>(newEntity, Transform());
-	addComponent<Tag>(newEntity, Tag{ name });
+	addComponent<TransformComponent>(newEntity, TransformComponent());
+	addComponent<TagComponent>(newEntity, TagComponent(name));
 
 	return newEntity;
 }

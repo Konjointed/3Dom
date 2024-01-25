@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include "Resources.h"
+#include "Mesh.h"
+
 int Game::run(const char* title, int width, int height, bool fullscreen)
 {
 	if (!startup(title, width, height, fullscreen)) {
@@ -10,6 +13,8 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 	}
 
 	glEnable(GL_DEPTH_TEST);
+
+	m_simulationManager.createScene(m_entityManager);
 
 	float lastFrameTime = 0.0f;
 	while (!quit) {
@@ -22,6 +27,7 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 		float timestep = time - lastFrameTime;
 		lastFrameTime = time;
 
+		// FPS Counter
 		//static int frameCount = 0;
 		//static float totalTime = 0.0f;
 		// 
@@ -35,6 +41,8 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 		//	totalTime = 0.0f;
 		//}	
 
+		m_entityManager.update(timestep);
+
 		SDL_GL_SwapWindow(window);
 	}
 
@@ -45,14 +53,22 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 
 bool Game::startup(const char* title, int width, int height, bool fullscreen)
 {
-	return loadSDL(title, width, height, fullscreen) &&
-		loadResources() &&
-		loadSubsystems();
+	if (!initGame(title, width, height, fullscreen)) {
+		return false;
+	}
+
+	loadShaderProgram(gResources, "default", "Resources/Shaders/default.vert", "Resources/Shaders/default.frag");
+	loadMesh(gResources, "Resources/Meshes/suzanne.obj", "suzanne");
+	loadMesh(gResources, "Resources/Meshes/cube.obj", "cube");
+
+	m_entityManager.startUp();
+
+	return true;
 }
 
 void Game::shutdown()
 {
-	gEntityManager.shutDown();
+	m_entityManager.shutDown();
 
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
@@ -111,7 +127,7 @@ void Game::processSDLEvent(SDL_Event& event)
 	}
 }
 
-bool Game::loadSDL(const char* title, int width, int height, bool fullscreen)
+bool Game::initGame(const char* title, int width, int height, bool fullscreen)
 {
 	//-----------------------------------------------------------------------------
 	// Initialzie SDL
@@ -155,14 +171,4 @@ bool Game::loadSDL(const char* title, int width, int height, bool fullscreen)
 	}
 
 	return true;
-}
-
-bool Game::loadResources()
-{
-	return true;
-}
-
-bool Game::loadSubsystems()
-{
-	return gEntityManager.startUp();
 }

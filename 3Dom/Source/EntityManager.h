@@ -13,7 +13,10 @@
 
 class EntityManager {
 public:
-	bool startUp();
+	EntityManager() = default;
+	~EntityManager() = default;
+
+	void startUp();
 	void shutDown();
 
 	void update(float timestep);
