@@ -11,6 +11,15 @@
 
 void MeshRenderSystem::update(EntityManager& entityManager, float timestep)
 {
+	CameraComponent* camera = nullptr;
+	TransformComponent* cameraTransform = nullptr;
+
+	for (auto& entity : entityManager.queryEntitiesWith<CameraComponent>()) {
+		camera = &entityManager.getComponent<CameraComponent>(entity);
+		cameraTransform = &entityManager.getComponent<TransformComponent>(entity);
+		break;
+	}
+
 	for (auto& entity : entityManager.queryEntitiesWith<MeshComponent, TransformComponent>()) {
 		MeshComponent& meshComponent = entityManager.getComponent<MeshComponent>(entity);
 		TransformComponent& transformComponent = entityManager.getComponent<TransformComponent>(entity);
@@ -21,7 +30,7 @@ void MeshRenderSystem::update(EntityManager& entityManager, float timestep)
 
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 projection = glm::perspective(glm::radians(70.0f), 1280.0f / 720.0f, 0.1f, 500.0f);
-		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 view = glm::lookAt(cameraTransform->translation, cameraTransform->translation + camera->forward, camera->up);
 
 		glUseProgram(program.id);
 

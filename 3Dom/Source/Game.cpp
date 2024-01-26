@@ -5,6 +5,8 @@
 #include "Resources.h"
 #include "Mesh.h"
 
+#include "Components.h"
+
 int Game::run(const char* title, int width, int height, bool fullscreen)
 {
 	if (!startup(title, width, height, fullscreen)) {
@@ -92,12 +94,16 @@ void Game::processSDLEvent(SDL_Event& event)
 	break;
 	case SDL_KEYDOWN:
 	{
+		Entity entity = m_entityManager.createEntity();
+		m_entityManager.addComponent<KeyEventComponent>(entity, KeyEventComponent(event.key.keysym.sym, true));
 		//KeyboardPressEvent evt(event.key.keysym.sym);
 		//dispatcher->Dispatch(evt);
 	}
 	break;
 	case SDL_KEYUP:
 	{
+		Entity entity = m_entityManager.createEntity();
+		m_entityManager.addComponent<KeyEventComponent>(entity, KeyEventComponent(event.key.keysym.sym, false));
 		//KeyboardReleaseEvent evt(event.key.keysym.sym);
 		//dispatcher->Dispatch(evt);
 	}

@@ -2,13 +2,16 @@
 
 #include <iostream>
 
-#include "Components.h"
 #include "Systems/MeshRenderSystem.h"
+#include "Systems/InputSystem.h"
+#include "Systems/CameraSystem.h"
 
 void EntityManager::startUp()
 {
 	std::cout << "EntityManager::startUp()\n";
+	registerSystem<InputSystem>();
 	registerSystem<MeshRenderSystem>();
+	registerSystem<CameraSystem>();
 }
 
 void EntityManager::shutDown()
@@ -21,6 +24,16 @@ void EntityManager::update(float timestep)
 	for (auto& system : systems) {
 		system->update(*this, timestep);
 	}
+}
+
+Entity EntityManager::createEntity()
+{
+	int entityId = nextEntityId++;
+	entityAlive[entityId] = true;
+
+	Entity newEntity(entityId);
+
+	return newEntity;
 }
 
 Entity EntityManager::createEntity(const std::string& name)

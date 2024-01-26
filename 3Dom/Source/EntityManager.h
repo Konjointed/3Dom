@@ -11,6 +11,11 @@
 #include "Entity.h"
 #include "System.h"
 
+#include "Components.h"
+
+// typeid() returns std::type_info
+// and is consistent for the same type
+
 class EntityManager {
 public:
 	EntityManager() = default;
@@ -21,33 +26,47 @@ public:
 
 	void update(float timestep);
 
+	Entity createEntity(); // Creates an empty entity 
 	Entity createEntity(const std::string& name);
 	void destroyEntity(Entity entity);
 	bool alive(Entity entity);
 
-	template <typename SystemType, typename... Args>
-	void registerSystem(Args&&... args) {
-		systems.emplace_back(std::make_unique<SystemType>(std::forward<Args>(args)...));
+	SingletonInputComponent& getSingletonInput() {
+		static SingletonInputComponent input;
+		return input;
 	}
 
-	template <typename T>
+	template <typename TSystem, typename... TArgs>
+	void registerSystem(TArgs&&... args) {
+		systems.emplace_back(std::make_unique<TSystem>(std::forward<TArgs>(args)...));
+	}
+
+	template <typename TComponent>
 	bool hasComponent(Entity entity) {
-		auto it = components[typeid(T)].find(entity.id);
-		return it != components[typeid(T)].end();
+		auto it = components[typeid(TComponent)].find(entity.id);
+		return it != components[typeid(TComponent)].end();
 	}
 
-	template <typename T, typename... Args>
-	void addComponent(Entity entity, Args&&... args) {
-		components[typeid(T)][entity.id] = std::make_unique<T>(std::forward<Args>(args)...);
+	template <typename TComponent, typename... TArgs>
+	void addComponent(Entity entity, TArgs&&... args) {
+		components[typeid(TComponent)][entity.id] = std::make_unique<TComponent>(std::forward<TArgs>(args)...);
 	}
 
-	template <typename T>
-	T& getComponent(Entity entity) {
-		auto& componentPtr = components[typeid(T)][entity.id];
-		return *static_cast<T*>(componentPtr.get());
+	template <typename TComponent>
+	void removeComponent(Entity entity) {
+		auto it = components[typeid(TComponent)].find(entity.id);
+		if (it != components[typeid(TComponent)].end()) {
+			components[typeid(TComponent)].erase(it);
+		}
 	}
 
-	template <typename... ComponentTypes>
+	template <typename TComponent>
+	TComponent& getComponent(Entity entity) {
+		auto& componentPtr = components[typeid(TComponent)][entity.id];
+		return *static_cast<TComponent*>(componentPtr.get());
+	}
+
+	template <typename... TArgs>
 	std::vector<Entity> queryEntitiesWith() {
 		std::vector<Entity> entitiesWithComponents;
 
@@ -56,7 +75,7 @@ public:
 			Entity entity(entityPair.first);
 
 			// Check if the entity is alive and has all the required components
-			if (entityAlive[entity.id] && hasComponents<ComponentTypes...>(entity)) {
+			if (entityAlive[entity.id] && hasComponents<TArgs...>(entity)) {
 				entitiesWithComponents.push_back(entity);
 			}
 		}
@@ -64,9 +83,9 @@ public:
 		return entitiesWithComponents;
 	}
 private:
-	template <typename... ComponentTypes>
+	template <typename... TArgs>
 	bool hasComponents(Entity entity) {
-		return (hasComponent<ComponentTypes>(entity) && ...);
+		return (hasComponent<TArgs>(entity) && ...);
 	}
 private:
 	int nextEntityId = 0;

@@ -144,6 +144,8 @@
     <ClCompile Include="Source\Resources.cpp" />
     <ClCompile Include="Source\ShaderProgram.cpp" />
     <ClCompile Include="Source\SimulationManager.cpp" />
+    <ClCompile Include="Source\Systems\CameraSystem.cpp" />
+    <ClCompile Include="Source\Systems\InputSystem.cpp" />
     <ClCompile Include="Source\Systems\MeshRenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +160,8 @@
     <ClInclude Include="Source\ShaderProgram.h" />
     <ClInclude Include="Source\SimulationManager.h" />
     <ClInclude Include="Source\System.h" />
+    <ClInclude Include="Source\Systems\CameraSystem.h" />
+    <ClInclude Include="Source\Systems\InputSystem.h" />
     <ClInclude Include="Source\Systems\MeshRenderSystem.h" />
   </ItemGroup>
   <ItemGroup>
