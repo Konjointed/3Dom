@@ -9,6 +9,11 @@
 #include "../EntityManager.h"
 #include "../Components.h"
 
+// Potential Alternatives:
+// 1) singleton component
+// 2) global camera or scene subsystem
+// 3) some dependency injection method
+// 4) better query functions?
 void MeshRenderSystem::update(EntityManager& entityManager, float timestep)
 {
 	CameraComponent* camera = nullptr;

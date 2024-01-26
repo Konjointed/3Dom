@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 #include <typeindex>
+#include <functional>
 
 #include "Component.h"
 #include "Entity.h"
@@ -81,6 +82,26 @@ public:
 		}
 
 		return entitiesWithComponents;
+	}
+
+	// Allows for custom queries example:
+	//auto visibleMeshEntities = entityManager.queryEntities(
+	//	[this](Entity entity) {
+	//		return entityManager.hasComponent<MeshComponent>(entity) &&
+	//			entityManager.getComponent<MeshComponent>(entity).isVisible;
+	//	}
+	//);
+	std::vector<Entity> queryEntities(std::function<bool(Entity)> filter) {
+		std::vector<Entity> filteredEntities;
+
+		for (const auto& entityPair : entityAlive) {
+			Entity entity(entityPair.first);
+			if (entityAlive[entity.id] && filter(entity)) {
+				filteredEntities.push_back(entity);
+			}
+		}
+
+		return filteredEntities;
 	}
 private:
 	template <typename... TArgs>

@@ -94,30 +94,30 @@ void Game::processSDLEvent(SDL_Event& event)
 	break;
 	case SDL_KEYDOWN:
 	{
-		Entity entity = m_entityManager.createEntity();
-		m_entityManager.addComponent<KeyEventComponent>(entity, KeyEventComponent(event.key.keysym.sym, true));
-		//KeyboardPressEvent evt(event.key.keysym.sym);
-		//dispatcher->Dispatch(evt);
+		Entity eventEntity = m_entityManager.createEntity();
+		m_entityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, true));
 	}
 	break;
 	case SDL_KEYUP:
 	{
-		Entity entity = m_entityManager.createEntity();
-		m_entityManager.addComponent<KeyEventComponent>(entity, KeyEventComponent(event.key.keysym.sym, false));
-		//KeyboardReleaseEvent evt(event.key.keysym.sym);
-		//dispatcher->Dispatch(evt);
+		Entity eventEntity = m_entityManager.createEntity();
+		m_entityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, false));
 	}
 	break;
 	case SDL_MOUSEBUTTONDOWN:
 	{
-		//MouseButtonPressEvent evt(event.button.button);
-		//dispatcher->Dispatch(evt);
+		Entity eventEntity = m_entityManager.createEntity();
+		m_entityManager.addComponent<MouseButtonEventComponent>(
+			eventEntity,
+			MouseButtonEventComponent(event.button.button, event.button.x, event.button.y, true));
 	}
 	break;
 	case SDL_MOUSEBUTTONUP:
 	{
-		//MouseButtonReleaseEvent evt(event.button.button);
-		//dispatcher->Dispatch(evt);
+		Entity eventEntity = m_entityManager.createEntity();
+		m_entityManager.addComponent<MouseButtonEventComponent>(
+			eventEntity,
+			MouseButtonEventComponent(event.button.button, event.button.x, event.button.y, false));
 	}
 	break;
 	case SDL_MOUSEWHEEL:
@@ -126,8 +126,10 @@ void Game::processSDLEvent(SDL_Event& event)
 	break;
 	case SDL_MOUSEMOTION:
 	{
-		//MouseMoveEvent evt(event.motion.x, event.motion.y);
-		//dispatcher->Dispatch(evt);
+		Entity eventEntity = m_entityManager.createEntity();
+		m_entityManager.addComponent<MouseMotionEventComponent>(
+			eventEntity,
+			MouseMotionEventComponent(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel));
 	}
 	break;
 	}
