@@ -136,33 +136,35 @@
   <ItemGroup>
     <ClCompile Include="Compile\glad.c" />
     <ClCompile Include="Compile\stb.cpp" />
-    <ClCompile Include="Source\EntityManager.cpp" />
-    <ClCompile Include="Source\EntryPoint.cpp" />
-    <ClCompile Include="Source\Game.cpp" />
-    <ClCompile Include="Source\Mesh.cpp" />
-    <ClCompile Include="Source\RenderingPipeline.cpp" />
-    <ClCompile Include="Source\Resources.cpp" />
-    <ClCompile Include="Source\ShaderProgram.cpp" />
-    <ClCompile Include="Source\SimulationManager.cpp" />
-    <ClCompile Include="Source\Systems\CameraSystem.cpp" />
+    <ClCompile Include="Source\Subsystems\EntityManager.cpp" />
+    <ClCompile Include="Source\Core\EntryPoint.cpp" />
+    <ClCompile Include="Source\Core\Game.cpp" />
+    <ClCompile Include="Source\Graphics\Mesh.cpp" />
+    <ClCompile Include="Source\Subsystems\RenderingPipeline.cpp" />
+    <ClCompile Include="Source\Core\Resources.cpp" />
+    <ClCompile Include="Source\Graphics\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Subsystems\SimulationManager.cpp" />
+    <ClCompile Include="Source\Systems\CameraController.cpp" />
     <ClCompile Include="Source\Systems\InputSystem.cpp" />
-    <ClCompile Include="Source\Systems\MeshRenderSystem.cpp" />
+    <ClCompile Include="Source\Systems\MeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Component.h" />
-    <ClInclude Include="Source\Components.h" />
-    <ClInclude Include="Source\Entity.h" />
-    <ClInclude Include="Source\EntityManager.h" />
-    <ClInclude Include="Source\Game.h" />
-    <ClInclude Include="Source\Mesh.h" />
-    <ClInclude Include="Source\RenderingPipeline.h" />
-    <ClInclude Include="Source\Resources.h" />
-    <ClInclude Include="Source\ShaderProgram.h" />
-    <ClInclude Include="Source\SimulationManager.h" />
-    <ClInclude Include="Source\System.h" />
-    <ClInclude Include="Source\Systems\CameraSystem.h" />
+    <ClInclude Include="Source\Components\Event.h" />
+    <ClInclude Include="Source\Components\SingletonInput.h" />
+    <ClInclude Include="Source\Core\IComponent.h" />
+    <ClInclude Include="Source\Components\Common.h" />
+    <ClInclude Include="Source\Core\Entity.h" />
+    <ClInclude Include="Source\Subsystems\EntityManager.h" />
+    <ClInclude Include="Source\Core\Game.h" />
+    <ClInclude Include="Source\Graphics\Mesh.h" />
+    <ClInclude Include="Source\Subsystems\RenderingPipeline.h" />
+    <ClInclude Include="Source\Core\Resources.h" />
+    <ClInclude Include="Source\Graphics\ShaderProgram.h" />
+    <ClInclude Include="Source\Subsystems\SimulationManager.h" />
+    <ClInclude Include="Source\Core\ISystem.h" />
+    <ClInclude Include="Source\Systems\CameraController.h" />
     <ClInclude Include="Source\Systems\InputSystem.h" />
-    <ClInclude Include="Source\Systems\MeshRenderSystem.h" />
+    <ClInclude Include="Source\Systems\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\default.frag" />

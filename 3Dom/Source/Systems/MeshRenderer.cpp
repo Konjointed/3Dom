@@ -1,34 +1,35 @@
-#include "MeshRenderSystem.h"
-
-#include <iostream>
+#include "MeshRenderer.h"
 
 #include <glad/glad.h>
 #include <SDL_timer.h>
 
-#include "../Resources.h"
-#include "../EntityManager.h"
-#include "../Components.h"
+#include "Core/Resources.h"
+#include "Subsystems/EntityManager.h"
+#include "Components/Common.h"
+#include <Graphics/Mesh.h>
+#include <Graphics/ShaderProgram.h>
 
 // Potential Alternatives:
-// 1) singleton component
-// 2) global camera or scene subsystem
-// 3) some dependency injection method
-// 4) better query functions?
-void MeshRenderSystem::update(EntityManager& entityManager, float timestep)
+// 1) Create a composite component that combines the properties
+// needed by the rendering system (mesh, transform, camera)
+// 2) TagComponent to label entities with different purposes
+// 1) Singleton component
+// 2) Global camera or scene subsystem
+void MeshRenderer::update(float timestep)
 {
 	CameraComponent* camera = nullptr;
 	TransformComponent* cameraTransform = nullptr;
 
-	for (auto& entity : entityManager.queryEntitiesWith<CameraComponent>()) {
-		camera = &entityManager.getComponent<CameraComponent>(entity);
-		cameraTransform = &entityManager.getComponent<TransformComponent>(entity);
+	for (auto& entity : m_entityManager.queryEntitiesWith<CameraComponent>()) {
+		camera = &m_entityManager.getComponent<CameraComponent>(entity);
+		cameraTransform = &m_entityManager.getComponent<TransformComponent>(entity);
 		break;
 	}
 
-	for (auto& entity : entityManager.queryEntitiesWith<MeshComponent, TransformComponent>()) {
-		MeshComponent& meshComponent = entityManager.getComponent<MeshComponent>(entity);
-		TransformComponent& transformComponent = entityManager.getComponent<TransformComponent>(entity);
-		MaterialComponent& materialComponent = entityManager.getComponent<MaterialComponent>(entity);
+	for (auto& entity : m_entityManager.queryEntitiesWith<MeshComponent, TransformComponent>()) {
+		MeshComponent& meshComponent = m_entityManager.getComponent<MeshComponent>(entity);
+		TransformComponent& transformComponent = m_entityManager.getComponent<TransformComponent>(entity);
+		MaterialComponent& materialComponent = m_entityManager.getComponent<MaterialComponent>(entity);
 
 		Mesh mesh = gResources.meshes[meshComponent.meshName];
 		ShaderProgram program = gResources.shaderPrograms[materialComponent.programName];

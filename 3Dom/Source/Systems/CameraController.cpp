@@ -1,20 +1,18 @@
-#include "CameraSystem.h"
-
-#include <iostream>
+#include "CameraController.h"
 
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
 
-#include "../EntityManager.h"
-#include "../Components.h"
+#include "Subsystems/EntityManager.h"
+#include "Components/Common.h"
 
-void CameraSystem::update(EntityManager& entityManager, float timestep)
+void CameraController::update(float timestep)
 {
-	for (auto& entity : entityManager.queryEntitiesWith<CameraComponent>()) {
-		CameraComponent& camera = entityManager.getComponent<CameraComponent>(entity);
-		TransformComponent& transform = entityManager.getComponent<TransformComponent>(entity);
+	for (auto& entity : m_entityManager.queryEntitiesWith<CameraComponent>()) {
+		CameraComponent& camera = m_entityManager.getComponent<CameraComponent>(entity);
+		TransformComponent& transform = m_entityManager.getComponent<TransformComponent>(entity);
 
-		SingletonInputComponent& singletonInput = entityManager.getSingletonInput();
+		SingletonInput& singletonInput = m_entityManager.getSingletonInput();
 
 		if (singletonInput.getMouseButtonState(SDL_BUTTON_RIGHT)) {
 			std::pair<int, int> mouseMotion = singletonInput.getMouseMotion();

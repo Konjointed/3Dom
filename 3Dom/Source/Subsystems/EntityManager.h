@@ -1,5 +1,7 @@
+// Note to self: typeid() returns std::type_info and is consistent for the same type
+
 #ifndef ENTITY_MANAGER_H
-#define ENTITY_MANAGER
+#define ENTITY_MANAGER_H
 
 #include <string>
 #include <vector>
@@ -8,15 +10,18 @@
 #include <typeindex>
 #include <functional>
 
-#include "Component.h"
-#include "Entity.h"
-#include "System.h"
+#include "Core/Entity.h"
+#include "Components/SingletonInput.h"
 
-#include "Components.h"
+//-----------------------------------------------------------------------------
+// Forward declarations
+//-----------------------------------------------------------------------------
+struct IComponent;
+struct ISystem;
 
-// typeid() returns std::type_info
-// and is consistent for the same type
-
+//-----------------------------------------------------------------------------
+// ECS/World
+//-----------------------------------------------------------------------------
 class EntityManager {
 public:
 	EntityManager() = default;
@@ -31,22 +36,6 @@ public:
 	Entity createEntity(const std::string& name);
 	void destroyEntity(Entity entity);
 	bool alive(Entity entity);
-
-	SingletonInputComponent& getSingletonInput() {
-		static SingletonInputComponent input;
-		return input;
-	}
-
-	template <typename TSystem, typename... TArgs>
-	void registerSystem(TArgs&&... args) {
-		systems.emplace_back(std::make_unique<TSystem>(std::forward<TArgs>(args)...));
-	}
-
-	template <typename TComponent>
-	bool hasComponent(Entity entity) {
-		auto it = components[typeid(TComponent)].find(entity.id);
-		return it != components[typeid(TComponent)].end();
-	}
 
 	template <typename TComponent, typename... TArgs>
 	void addComponent(Entity entity, TArgs&&... args) {
@@ -67,6 +56,18 @@ public:
 		return *static_cast<TComponent*>(componentPtr.get());
 	}
 
+	template <typename TComponent>
+	bool hasComponent(Entity entity) {
+		auto it = components[typeid(TComponent)].find(entity.id);
+		return it != components[typeid(TComponent)].end();
+	}
+
+	template <typename TSystem>
+	void registerSystem() {
+		std::unique_ptr<TSystem> system = std::make_unique<TSystem>(*this);
+		systems.push_back(std::move(system));
+	}
+
 	template <typename... TArgs>
 	std::vector<Entity> queryEntitiesWith() {
 		std::vector<Entity> entitiesWithComponents;
@@ -85,13 +86,13 @@ public:
 	}
 
 	// Allows for custom queries example:
-	//auto visibleMeshEntities = entityManager.queryEntities(
+	//auto visibleMeshEntities = entityManager.queryEntitiesWithFilter(
 	//	[this](Entity entity) {
 	//		return entityManager.hasComponent<MeshComponent>(entity) &&
 	//			entityManager.getComponent<MeshComponent>(entity).isVisible;
 	//	}
 	//);
-	std::vector<Entity> queryEntities(std::function<bool(Entity)> filter) {
+	std::vector<Entity> queryEntitiesWithFilter(std::function<bool(Entity)> filter) {
 		std::vector<Entity> filteredEntities;
 
 		for (const auto& entityPair : entityAlive) {
@@ -103,6 +104,11 @@ public:
 
 		return filteredEntities;
 	}
+
+	SingletonInput& getSingletonInput() {
+		static SingletonInput input;
+		return input;
+	}
 private:
 	template <typename... TArgs>
 	bool hasComponents(Entity entity) {
@@ -111,9 +117,14 @@ private:
 private:
 	int nextEntityId = 0;
 
-	std::vector<std::unique_ptr<System>> systems;
+	std::vector<std::unique_ptr<ISystem>> systems;
 	std::unordered_map<int, bool> entityAlive;
 	std::unordered_map<std::type_index, std::unordered_map<int, std::shared_ptr<void>>> components;
 };
+
+//-----------------------------------------------------------------------------
+// Singleton accessor
+//-----------------------------------------------------------------------------
+extern EntityManager gEntityManager;
 
 #endif 

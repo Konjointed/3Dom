@@ -3,9 +3,14 @@
 #include <iostream>
 
 #include "Resources.h"
-#include "Mesh.h"
 
-#include "Components.h"
+#include "Subsystems/EntityManager.h"
+#include "Subsystems/SimulationManager.h"
+
+#include "Components/Event.h"
+
+#include "Graphics/Mesh.h"
+#include "Graphics/ShaderProgram.h"
 
 int Game::run(const char* title, int width, int height, bool fullscreen)
 {
@@ -16,7 +21,7 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 
 	glEnable(GL_DEPTH_TEST);
 
-	m_simulationManager.createScene(m_entityManager);
+	gSimulationManager.createScene();
 
 	float lastFrameTime = 0.0f;
 	while (!quit) {
@@ -43,7 +48,7 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 		//	totalTime = 0.0f;
 		//}	
 
-		m_entityManager.update(timestep);
+		gEntityManager.update(timestep);
 
 		SDL_GL_SwapWindow(window);
 	}
@@ -63,14 +68,16 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 	loadMesh(gResources, "Resources/Meshes/suzanne.obj", "suzanne");
 	loadMesh(gResources, "Resources/Meshes/cube.obj", "cube");
 
-	m_entityManager.startUp();
+	gEntityManager.startUp();
+	gSimulationManager.startUp();
 
 	return true;
 }
 
 void Game::shutdown()
 {
-	m_entityManager.shutDown();
+	gSimulationManager.shutDown();
+	gEntityManager.shutDown();
 
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
@@ -94,28 +101,28 @@ void Game::processSDLEvent(SDL_Event& event)
 	break;
 	case SDL_KEYDOWN:
 	{
-		Entity eventEntity = m_entityManager.createEntity();
-		m_entityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, true));
+		Entity eventEntity = gEntityManager.createEntity();
+		gEntityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, true));
 	}
 	break;
 	case SDL_KEYUP:
 	{
-		Entity eventEntity = m_entityManager.createEntity();
-		m_entityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, false));
+		Entity eventEntity = gEntityManager.createEntity();
+		gEntityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, false));
 	}
 	break;
 	case SDL_MOUSEBUTTONDOWN:
 	{
-		Entity eventEntity = m_entityManager.createEntity();
-		m_entityManager.addComponent<MouseButtonEventComponent>(
+		Entity eventEntity = gEntityManager.createEntity();
+		gEntityManager.addComponent<MouseButtonEventComponent>(
 			eventEntity,
 			MouseButtonEventComponent(event.button.button, event.button.x, event.button.y, true));
 	}
 	break;
 	case SDL_MOUSEBUTTONUP:
 	{
-		Entity eventEntity = m_entityManager.createEntity();
-		m_entityManager.addComponent<MouseButtonEventComponent>(
+		Entity eventEntity = gEntityManager.createEntity();
+		gEntityManager.addComponent<MouseButtonEventComponent>(
 			eventEntity,
 			MouseButtonEventComponent(event.button.button, event.button.x, event.button.y, false));
 	}
@@ -126,8 +133,8 @@ void Game::processSDLEvent(SDL_Event& event)
 	break;
 	case SDL_MOUSEMOTION:
 	{
-		Entity eventEntity = m_entityManager.createEntity();
-		m_entityManager.addComponent<MouseMotionEventComponent>(
+		Entity eventEntity = gEntityManager.createEntity();
+		gEntityManager.addComponent<MouseMotionEventComponent>(
 			eventEntity,
 			MouseMotionEventComponent(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel));
 	}

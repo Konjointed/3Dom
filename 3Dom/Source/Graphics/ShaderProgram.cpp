@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 
-#include "Resources.h"
+#include "Core/Resources.h"
 
 void addShaderToProgram(ShaderProgram& program, GLenum type, const std::string& filepath)
 {

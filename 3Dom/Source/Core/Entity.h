@@ -1,10 +1,8 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-class Entity {
-public:
+struct Entity {
 	int id;
-
 	Entity(int id) : id(id) {}
 };
 

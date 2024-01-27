@@ -1,12 +1,13 @@
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
 
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include <glad/glad.h>
-#include <glm/gtc/type_ptr.hpp>
+
+#include "glm/fwd.hpp"
+#include "glm/gtc/type_ptr.inl"
 
 struct Resources;
 

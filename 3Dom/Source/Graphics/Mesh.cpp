@@ -3,8 +3,10 @@
 #include <iostream>
 
 #include <glad/glad.h>
+#include <assimp/postprocess.h>
+#include <assimp/Importer.hpp>
 
-#include "Resources.h"
+#include "Core/Resources.h"
 
 Mesh processMesh(aiMesh* mesh, const aiScene* scene)
 {

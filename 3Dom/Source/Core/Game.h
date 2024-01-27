@@ -5,9 +5,6 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#include "EntityManager.h"
-#include "SimulationManager.h"
-
 class Game {
 public:
 	static Game& get() {
@@ -19,14 +16,6 @@ public:
 	Game& operator=(const Game&) = delete;
 
 	int run(const char* title, int width, int height, bool fullscreen);
-
-	EntityManager& getEntityManager() {
-		return m_entityManager;
-	}
-
-	SimulationManager& getSimulationManager() {
-		return m_simulationManager;
-	}
 private:
 	Game() = default;
 
@@ -41,9 +30,6 @@ private:
 	bool quit = false;
 	SDL_Window* window = nullptr;
 	SDL_GLContext glContext = nullptr;
-
-	EntityManager m_entityManager;
-	SimulationManager m_simulationManager;
 };
 
 #endif 

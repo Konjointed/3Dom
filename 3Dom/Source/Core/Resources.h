@@ -4,8 +4,8 @@
 #include <map>
 #include <string>
 
-#include "Mesh.h"
-#include "ShaderProgram.h"
+#include "Graphics/Mesh.h"
+#include "Graphics/ShaderProgram.h"
 
 struct Resources {
 	std::map<std::string, Mesh> meshes;

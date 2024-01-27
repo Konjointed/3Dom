@@ -2,16 +2,22 @@
 
 #include <iostream>
 
-#include "Systems/MeshRenderSystem.h"
+#include "Components/Common.h"
 #include "Systems/InputSystem.h"
-#include "Systems/CameraSystem.h"
+#include "Systems/MeshRenderer.h"
+#include "Systems/CameraController.h"
+
+//-----------------------------------------------------------------------------
+// Singleton accessor
+//-----------------------------------------------------------------------------
+EntityManager gEntityManager;
 
 void EntityManager::startUp()
 {
 	std::cout << "EntityManager::startUp()\n";
 	registerSystem<InputSystem>();
-	registerSystem<MeshRenderSystem>();
-	registerSystem<CameraSystem>();
+	registerSystem<MeshRenderer>();
+	registerSystem<CameraController>();
 }
 
 void EntityManager::shutDown()
@@ -22,7 +28,7 @@ void EntityManager::shutDown()
 void EntityManager::update(float timestep)
 {
 	for (auto& system : systems) {
-		system->update(*this, timestep);
+		system->update(timestep);
 	}
 }
 
