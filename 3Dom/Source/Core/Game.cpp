@@ -6,6 +6,7 @@
 
 #include "Subsystems/EntityManager.h"
 #include "Subsystems/SimulationManager.h"
+#include "Subsystems/LuaEnvironment.h"
 
 #include "Components/Event.h"
 
@@ -18,6 +19,14 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 		std::cout << "Game failed to start up\n";
 		return -1;
 	}
+
+	gLuaEnvironment.executeFile("Resources/Scripts/script.lua");
+
+	auto value1 = gLuaEnvironment.call("greetings", LuaString::make("C++"));
+	std::cout << getLuaValueString(value1) << "\n";
+
+	auto value2 = gLuaEnvironment.call("greetings", LuaNumber::make(3.14));
+	std::cout << getLuaValueString(value2) << "\n";
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -68,6 +77,7 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 	loadMesh(gResources, "Resources/Meshes/suzanne.obj", "suzanne");
 	loadMesh(gResources, "Resources/Meshes/cube.obj", "cube");
 
+	gLuaEnvironment.startUp();
 	gEntityManager.startUp();
 	gSimulationManager.startUp();
 
@@ -78,6 +88,7 @@ void Game::shutdown()
 {
 	gSimulationManager.shutDown();
 	gEntityManager.shutDown();
+	gLuaEnvironment.shutDown();
 
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);
