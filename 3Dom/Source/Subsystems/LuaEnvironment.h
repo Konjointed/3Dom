@@ -93,30 +93,10 @@ public:
 	void setGlobalString(const std::string& name, const std::string& value);
 
 	template <typename... Ts>
-	LuaValue call(const std::string& function, const Ts&...params) {
-		int type = lua_getglobal(L, function.c_str());
-		assert(LUA_TFUNCTION == type);
-		for (auto param : std::initializer_list<LuaValue>{ params... }) {
-			pushValue(param);
-		}
-		pcall(sizeof...(params), 1);
-		return popValue();
-	}
+	LuaValue call(const std::string& function, const Ts&...params);
 
 	template <typename... Ts>
-	std::vector<LuaValue> vectorCall(const std::string& function, const Ts&...params) {
-		int stackSz = lua_gettop(L);
-		int type = lua_getglobal(L, function.c_str());
-		assert(LUA_TFUNCTION == type);
-		for (auto param : std::initializer_list<LuaValue>{ params... }) {
-			pushValue(param);
-		}
-		if (pcall(sizeof...(params), LUA_MULTRET)) {
-			int nresults = lua_gettop(L) - stackSz;
-			return popValues(nresults);
-		}
-		return std::vector<LuaValue>();
-	}
+	std::vector<LuaValue> vectorCall(const std::string& function, const Ts&...params);
 private:
 	bool pcall(int nargs = 0, int nresults = 0);
 	std::string popString();
@@ -127,6 +107,32 @@ private:
 private:
 	lua_State* L;
 };
+
+template <typename... Ts>
+LuaValue LuaEnvironment::call(const std::string& function, const Ts&...params) {
+	int type = lua_getglobal(L, function.c_str());
+	assert(LUA_TFUNCTION == type);
+	for (auto param : std::initializer_list<LuaValue>{ params... }) {
+		pushValue(param);
+	}
+	pcall(sizeof...(params), 1);
+	return popValue();
+}
+
+template <typename... Ts>
+std::vector<LuaValue> LuaEnvironment::vectorCall(const std::string& function, const Ts&...params) {
+	int stackSz = lua_gettop(L);
+	int type = lua_getglobal(L, function.c_str());
+	assert(LUA_TFUNCTION == type);
+	for (auto param : std::initializer_list<LuaValue>{ params... }) {
+		pushValue(param);
+	}
+	if (pcall(sizeof...(params), LUA_MULTRET)) {
+		int nresults = lua_gettop(L) - stackSz;
+		return popValues(nresults);
+	}
+	return std::vector<LuaValue>();
+}
 
 extern LuaEnvironment gLuaEnvironment;
 
