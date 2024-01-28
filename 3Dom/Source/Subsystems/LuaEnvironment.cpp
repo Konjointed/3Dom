@@ -1,7 +1,6 @@
 #include "LuaEnvironment.h"
 
 #include <iostream>
-#include <cassert>
 
 LuaEnvironment gLuaEnvironment;
 
@@ -48,20 +47,13 @@ void LuaEnvironment::setGlobalString(const std::string& name, const std::string&
 	lua_setglobal(L, name.c_str());
 }
 
-LuaValue LuaEnvironment::call(const std::string& function, const LuaValue& param)
-{
-	int type = lua_getglobal(L, function.c_str());
-	assert(LUA_TFUNCTION == type);
-	pushValue(param);
-	pcall(1, 1);
-	return popValue();
-}
-
-void LuaEnvironment::pcall(int nargs, int nresults)
+bool LuaEnvironment::pcall(int nargs, int nresults)
 {
 	if (lua_pcall(L, nargs, nresults, 0)) {
 		std::cerr << "Failed to execute Lua code:" << popString() << "\n";
+		return false;
 	}
+	return true;
 }
 
 std::string LuaEnvironment::popString()
@@ -109,5 +101,15 @@ LuaValue LuaEnvironment::popValue()
 	auto value = getValue(-1);
 	lua_pop(L, 1);
 	return value;
+}
+
+std::vector<LuaValue> LuaEnvironment::popValues(int n)
+{
+	std::vector<LuaValue> results;
+	for (int i = n; i > 0; --i) {
+		results.push_back(getValue(-i));
+	}
+	lua_pop(L, n);
+	return results;
 }
 

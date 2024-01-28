@@ -22,11 +22,20 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 
 	gLuaEnvironment.executeFile("Resources/Scripts/script.lua");
 
-	auto value1 = gLuaEnvironment.call("greetings", LuaString::make("C++"));
-	std::cout << getLuaValueString(value1) << "\n";
+	auto result = gLuaEnvironment.call("greetings", LuaString::make("C++"), LuaString::make("Lua"));
+	std::cout << getLuaValueString(result) << "\n";
 
-	auto value2 = gLuaEnvironment.call("greetings", LuaNumber::make(3.14));
-	std::cout << getLuaValueString(value2) << "\n";
+	auto results = gLuaEnvironment.vectorCall(
+		"dump_params",
+		LuaString::make("C++"),
+		LuaString::make("Lua"),
+		LuaNumber::make(3.14),
+		LuaBoolean::make(true),
+		LuaNil::make());
+
+	for (const auto& result : results) {
+		std::cout << getLuaValueString(result) << "\n";
+	}
 
 	glEnable(GL_DEPTH_TEST);
 
