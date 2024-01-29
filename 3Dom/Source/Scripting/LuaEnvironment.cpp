@@ -14,6 +14,25 @@ namespace {
 	}
 }
 
+namespace {
+	int luaPrintOverride(lua_State* L) {
+		int nArgs = lua_gettop(L);
+		std::cout << "[Lua] ";
+		for (int i = 1; i <= nArgs; i++) {
+			std::cout << "" << luaL_tolstring(L, i, NULL);
+		}
+		std::cout << "\n";
+		return 0;
+	}
+
+	void overrideLuaFunctions(lua_State* L) {
+		const struct luaL_Reg overrides[] = {
+			{"print", luaPrintOverride}, {NULL, NULL} 
+		};
+		lua_getglobal(L, "_G");
+		luaL_setfuncs(L, overrides, 0);s
+}
+
 LuaEnvironment gLuaEnvironment;
 
 void LuaEnvironment::startUp()
@@ -23,6 +42,7 @@ void LuaEnvironment::startUp()
 	luaL_openlibs(L);
 
 	registerHostFunctions(L);
+	overrideLuaFunctions(L);
 }
 
 void LuaEnvironment::shutDown()
