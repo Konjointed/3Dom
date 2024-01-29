@@ -72,8 +72,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>.\Bin</OutDir>
-    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\SDL2;D:\Github\3Dom\3Dom\Source;D:\Github\3Dom\3Dom\ThirdParty;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\lua;D:\Github\3Dom\3Dom\ThirdParty\SDL2;D:\Github\3Dom\3Dom\Source;D:\Github\3Dom\3Dom\ThirdParty;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Github\3Dom\3Dom\Lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\lua;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\lua;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\lua;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -85,6 +94,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);lua54.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -101,6 +111,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);lua54.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -114,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;sdl2main.lib;sdl2.lib;sdl2_image.lib;sdl2_ttf.lib;freetype.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;sdl2main.lib;sdl2.lib;sdl2_image.lib;sdl2_ttf.lib;freetype.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies);lua54.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,12 +142,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);lua54.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Compile\glad.c" />
     <ClCompile Include="Compile\stb.cpp" />
-    <ClCompile Include="Source\Subsystems\EntityManager.cpp" />
+    <ClCompile Include="Source\Scripting\LuaEnvironment.cpp" />
+    <ClCompile Include="Source\ECS\EntityManager.cpp" />
     <ClCompile Include="Source\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
     <ClCompile Include="Source\Graphics\Mesh.cpp" />
@@ -144,29 +157,31 @@
     <ClCompile Include="Source\Core\Resources.cpp" />
     <ClCompile Include="Source\Graphics\ShaderProgram.cpp" />
     <ClCompile Include="Source\Subsystems\SimulationManager.cpp" />
-    <ClCompile Include="Source\Systems\CameraController.cpp" />
-    <ClCompile Include="Source\Systems\InputSystem.cpp" />
-    <ClCompile Include="Source\Systems\MeshRenderer.cpp" />
+    <ClCompile Include="Source\ECS\Systems\CameraController.cpp" />
+    <ClCompile Include="Source\ECS\Systems\InputSystem.cpp" />
+    <ClCompile Include="Source\ECS\Systems\MeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Components\Event.h" />
-    <ClInclude Include="Source\Components\SingletonInput.h" />
-    <ClInclude Include="Source\Core\IComponent.h" />
-    <ClInclude Include="Source\Components\Common.h" />
-    <ClInclude Include="Source\Core\Entity.h" />
-    <ClInclude Include="Source\Subsystems\EntityManager.h" />
+    <ClInclude Include="Source\ECS\Components\Event.h" />
+    <ClInclude Include="Source\ECS\Components\SingletonInput.h" />
+    <ClInclude Include="Source\ECS\IComponent.h" />
+    <ClInclude Include="Source\ECS\Components\Common.h" />
+    <ClInclude Include="Source\ECS\Entity.h" />
+    <ClInclude Include="Source\Scripting\LuaEnvironment.h" />
+    <ClInclude Include="Source\ECS\EntityManager.h" />
     <ClInclude Include="Source\Core\Game.h" />
     <ClInclude Include="Source\Graphics\Mesh.h" />
     <ClInclude Include="Source\Subsystems\RenderingPipeline.h" />
     <ClInclude Include="Source\Core\Resources.h" />
     <ClInclude Include="Source\Graphics\ShaderProgram.h" />
     <ClInclude Include="Source\Subsystems\SimulationManager.h" />
-    <ClInclude Include="Source\Core\ISystem.h" />
-    <ClInclude Include="Source\Systems\CameraController.h" />
-    <ClInclude Include="Source\Systems\InputSystem.h" />
-    <ClInclude Include="Source\Systems\MeshRenderer.h" />
+    <ClInclude Include="Source\ECS\ISystem.h" />
+    <ClInclude Include="Source\ECS\Systems\CameraController.h" />
+    <ClInclude Include="Source\ECS\Systems\InputSystem.h" />
+    <ClInclude Include="Source\ECS\Systems\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Scripts\script.lua" />
     <None Include="Resources\Shaders\default.frag" />
     <None Include="Resources\Shaders\default.vert" />
   </ItemGroup>

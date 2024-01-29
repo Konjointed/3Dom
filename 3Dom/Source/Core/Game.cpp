@@ -4,10 +4,10 @@
 
 #include "Resources.h"
 
-#include "Subsystems/EntityManager.h"
 #include "Subsystems/SimulationManager.h"
-
-#include "Components/Event.h"
+#include "Scripting/LuaEnvironment.h"
+#include "ECS/EntityManager.h"
+#include "ECS/Components/Event.h"
 
 #include "Graphics/Mesh.h"
 #include "Graphics/ShaderProgram.h"
@@ -68,6 +68,7 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 	loadMesh(gResources, "Resources/Meshes/suzanne.obj", "suzanne");
 	loadMesh(gResources, "Resources/Meshes/cube.obj", "cube");
 
+	gLuaEnvironment.startUp();
 	gEntityManager.startUp();
 	gSimulationManager.startUp();
 
@@ -78,6 +79,7 @@ void Game::shutdown()
 {
 	gSimulationManager.shutDown();
 	gEntityManager.shutDown();
+	gLuaEnvironment.shutDown();
 
 	SDL_GL_DeleteContext(glContext);
 	SDL_DestroyWindow(window);

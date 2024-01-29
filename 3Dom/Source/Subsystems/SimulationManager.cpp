@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "EntityManager.h"
-#include "Components/Common.h"
+#include "ECS/EntityManager.h"
+#include "ECS/Components/Common.h"
 
 //-----------------------------------------------------------------------------
 // Singleton accessor
