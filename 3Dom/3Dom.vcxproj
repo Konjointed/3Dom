@@ -148,7 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Compile\glad.c" />
     <ClCompile Include="Compile\stb.cpp" />
-    <ClCompile Include="Source\Subsystems\LuaEnvironment.cpp" />
+    <ClCompile Include="Source\Scripting\LuaEnvironment.cpp" />
     <ClCompile Include="Source\Subsystems\EntityManager.cpp" />
     <ClCompile Include="Source\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
@@ -168,7 +168,8 @@
     <ClInclude Include="Source\Components\Common.h" />
     <ClInclude Include="Source\Core\Entity.h" />
     <ClInclude Include="Source\Core\LuaType.h" />
-    <ClInclude Include="Source\Subsystems\LuaEnvironment.h" />
+    <ClInclude Include="Source\Scripting\LuaEnvironment.h" />
+    <ClInclude Include="Source\Scripting\LuaType.h" />
     <ClInclude Include="Source\Subsystems\EntityManager.h" />
     <ClInclude Include="Source\Core\Game.h" />
     <ClInclude Include="Source\Graphics\Mesh.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Source\Systems\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Scripts\cpp_from_lua.lua" />
     <None Include="Resources\Scripts\script.lua" />
     <None Include="Resources\Shaders\default.frag" />
     <None Include="Resources\Shaders\default.vert" />

@@ -6,7 +6,7 @@
 
 #include "Subsystems/EntityManager.h"
 #include "Subsystems/SimulationManager.h"
-#include "Subsystems/LuaEnvironment.h"
+#include "Scripting/LuaEnvironment.h"
 
 #include "Components/Event.h"
 
@@ -20,22 +20,58 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 		return -1;
 	}
 
-	gLuaEnvironment.executeFile("Resources/Scripts/script.lua");
+	//gLuaEnvironment.executeFile("Resources/Scripts/script.lua");
 
-	auto result = gLuaEnvironment.call("greetings", LuaString::make("C++"), LuaString::make("Lua"));
-	std::cout << getLuaValueString(result) << "\n";
+	//auto result = gLuaEnvironment.call("greetings", LuaString::make("C++"), LuaString::make("Lua"));
+	//std::cout << getLuaValueString(result) << "\n";
 
-	auto results = gLuaEnvironment.vectorCall(
-		"dump_params",
-		LuaString::make("C++"),
-		LuaString::make("Lua"),
-		LuaNumber::make(3.14),
-		LuaBoolean::make(true),
-		LuaNil::make());
+	//auto results = gLuaEnvironment.vectorCall(
+	//	"dump_params",
+	//	LuaString::make("C++"),
+	//	LuaString::make("Lua"),
+	//	LuaNumber::make(3.14),
+	//	LuaBoolean::make(true),
+	//	LuaNil::make());
 
-	for (const auto& result : results) {
-		std::cout << getLuaValueString(result) << "\n";
-	}
+	//for (const auto& result : results) {
+	//	std::cout << getLuaValueString(result) << "\n";
+	//}
+
+	//gLuaEnvironment.setTable("position", "x", LuaNumber::make(3));
+	//auto x = gLuaEnvironment.getTable("position", "x");
+	//auto y = gLuaEnvironment.getTable("position", "y");
+	//std::cout << "x=" << std::get<LuaNumber>(x).value << ",y=" << std::get<LuaNumber>(y).value << "\n";
+
+	//gLuaEnvironment.setTable("seq", 1, LuaNumber::make(3));
+	//gLuaEnvironment.setTable("seq", 2, LuaNumber::make(9));
+	//gLuaEnvironment.setTable("seq", 3, LuaNumber::make(27));
+
+	//auto v1 = gLuaEnvironment.getTable("seq", 1);
+	//auto v2 = gLuaEnvironment.getTable("seq", 2);
+	//auto v3 = gLuaEnvironment.getTable("seq", 3);
+	//std::cout << "seq={"
+	//	<< std::get<LuaNumber>(v1).value << ","
+	//	<< std::get<LuaNumber>(v2).value << ","
+	//	<< std::get<LuaNumber>(v3).value << "}"
+	//	<< "\n";
+
+	//gLuaEnvironment.tableCall("Destinations", "new", false, LuaString::make("dst"));
+	//gLuaEnvironment.tableCall("dst", "wish", true, LuaString::make("London"), LuaString::make("Paris"), LuaString::make("Amsterdam"));
+	//gLuaEnvironment.tableCall("dst", "went", true, LuaString::make("Paris"));
+	//auto visited = gLuaEnvironment.vectorTableCall("dst", "list_visited", true);
+	//auto unvisited = gLuaEnvironment.vectorTableCall("dst", "list_unvisited", true);
+
+	//std::cout << "Visited:" << "\n";
+	//for (auto place : visited) {
+	//	std::cout << std::get<LuaString>(place).value << "\n";
+	//}
+
+	//std::cout << "Unvisited:" << "\n";
+	//for (auto place : unvisited) {
+	//	std::cout << std::get<LuaString>(place).value << "\n";
+	//}
+
+	gLuaEnvironment.executeFile("Resources/Scripts/cpp_from_lua.lua");
 
 	glEnable(GL_DEPTH_TEST);
 

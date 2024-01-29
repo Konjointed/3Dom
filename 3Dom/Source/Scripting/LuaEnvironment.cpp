@@ -2,13 +2,27 @@
 
 #include <iostream>
 
+namespace {
+	int luaGetExecutorVersionCode(lua_State* L) {
+		lua_pushinteger(L, LuaEnvironment::versionCode);
+		return 1;
+	}
+
+	void registerHostFunctions(lua_State* L) {
+		lua_pushcfunction(L, luaGetExecutorVersionCode);
+		lua_setglobal(L, "host_version");
+	}
+}
+
 LuaEnvironment gLuaEnvironment;
 
 void LuaEnvironment::startUp()
 {
 	L = luaL_newstate();
-	luaL_openlibs(L);
 	std::cout << "Lua version number is " << lua_version(L) << "\n";
+	luaL_openlibs(L);
+
+	registerHostFunctions(L);
 }
 
 void LuaEnvironment::shutDown()
@@ -45,6 +59,46 @@ void LuaEnvironment::setGlobalString(const std::string& name, const std::string&
 {
 	lua_pushstring(L, value.c_str());
 	lua_setglobal(L, name.c_str());
+}
+
+LuaValue LuaEnvironment::getTable(const std::string& table, const std::string& key)
+{
+	int type = lua_getglobal(L, table.c_str());
+	assert(LUA_TTABLE == type);
+	lua_pushstring(L, key.c_str());
+	lua_gettable(L, -2);
+	auto value = popValue();
+	lua_pop(L, 1);
+	return value;
+}
+
+void LuaEnvironment::setTable(const std::string& table, const std::string& key, const LuaValue& value)
+{
+	int type = lua_getglobal(L, table.c_str());
+	assert(LUA_TTABLE == type);
+	lua_pushstring(L, key.c_str());
+	pushValue(value);
+	lua_settable(L, -3);
+	lua_pop(L, 1);
+}
+
+LuaValue LuaEnvironment::getTable(const std::string& table, int index)
+{
+	int type = lua_getglobal(L, table.c_str());
+	assert(LUA_TTABLE == type);
+	lua_geti(L, -1, index);
+	auto value = popValue();
+	lua_pop(L, 1);
+	return value;
+}
+
+void LuaEnvironment::setTable(const std::string& table, int index, const LuaValue& value)
+{
+	int type = lua_getglobal(L, table.c_str());
+	assert(LUA_TTABLE == type);
+	pushValue(value);
+	lua_seti(L, -2, index);
+	lua_pop(L, 1);
 }
 
 bool LuaEnvironment::pcall(int nargs, int nresults)
