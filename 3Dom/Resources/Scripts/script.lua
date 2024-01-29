@@ -1,3 +1,13 @@
 print("Hello from Lua!")
-test:doSomething()
-test:doSomethingElse()
+
+function Start()
+	-- Do something on created/started
+end
+
+function Update(dt)
+	print("Update tick")
+end
+
+function Destroy()
+	-- Do something when on stopped/destroyed
+end

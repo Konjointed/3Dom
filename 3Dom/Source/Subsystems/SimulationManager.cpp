@@ -26,8 +26,10 @@ void SimulationManager::createScene()
 
 	Entity entity = gEntityManager.createEntity("Camera");
 	gEntityManager.addComponent<CameraComponent>(entity, CameraComponent());
+	//gEntityManager.addComponent<ScriptComponent>(entity, ScriptComponent());
 
 	entity = gEntityManager.createEntity("Player");
 	gEntityManager.addComponent<MeshComponent>(entity, MeshComponent("suzanne"));
 	gEntityManager.addComponent<MaterialComponent>(entity, MaterialComponent("default"));
+	gEntityManager.addComponent<ScriptComponent>(entity, ScriptComponent("Resources/Scripts/script.lua"));
 }

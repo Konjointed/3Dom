@@ -38,52 +38,22 @@ public:
 	bool alive(Entity entity);
 
 	template <typename TComponent, typename... TArgs>
-	void addComponent(Entity entity, TArgs&&... args) {
-		components[typeid(TComponent)][entity.id] = std::make_unique<TComponent>(std::forward<TArgs>(args)...);
-	}
+	void addComponent(Entity entity, TArgs&&... args);
 
 	template <typename TComponent>
-	void removeComponent(Entity entity) {
-		auto it = components[typeid(TComponent)].find(entity.id);
-		if (it != components[typeid(TComponent)].end()) {
-			components[typeid(TComponent)].erase(it);
-		}
-	}
+	void removeComponent(Entity entity);
 
 	template <typename TComponent>
-	TComponent& getComponent(Entity entity) {
-		auto& componentPtr = components[typeid(TComponent)][entity.id];
-		return *static_cast<TComponent*>(componentPtr.get());
-	}
+	TComponent& getComponent(Entity entity);
 
 	template <typename TComponent>
-	bool hasComponent(Entity entity) {
-		auto it = components[typeid(TComponent)].find(entity.id);
-		return it != components[typeid(TComponent)].end();
-	}
+	bool hasComponent(Entity entity);
 
 	template <typename TSystem>
-	void registerSystem() {
-		std::unique_ptr<TSystem> system = std::make_unique<TSystem>(*this);
-		systems.push_back(std::move(system));
-	}
+	void registerSystem();
 
 	template <typename... TArgs>
-	std::vector<Entity> queryEntitiesWith() {
-		std::vector<Entity> entitiesWithComponents;
-
-		// Iterate over all entities
-		for (const auto& entityPair : entityAlive) {
-			Entity entity(entityPair.first);
-
-			// Check if the entity is alive and has all the required components
-			if (entityAlive[entity.id] && hasComponents<TArgs...>(entity)) {
-				entitiesWithComponents.push_back(entity);
-			}
-		}
-
-		return entitiesWithComponents;
-	}
+	std::vector<Entity> queryEntitiesWith();
 
 	// Allows for custom queries example:
 	//auto visibleMeshEntities = entityManager.queryEntitiesWithFilter(
@@ -111,9 +81,7 @@ public:
 	}
 private:
 	template <typename... TArgs>
-	bool hasComponents(Entity entity) {
-		return (hasComponent<TArgs>(entity) && ...);
-	}
+	bool hasComponents(Entity entity);
 private:
 	int nextEntityId = 0;
 
@@ -121,6 +89,59 @@ private:
 	std::unordered_map<int, bool> entityAlive;
 	std::unordered_map<std::type_index, std::unordered_map<int, std::shared_ptr<void>>> components;
 };
+
+template <typename TComponent, typename... TArgs>
+void EntityManager::addComponent(Entity entity, TArgs&&... args) {
+	components[typeid(TComponent)][entity.id] = std::make_unique<TComponent>(std::forward<TArgs>(args)...);
+}
+
+template <typename TComponent>
+void EntityManager::removeComponent(Entity entity) {
+	auto it = components[typeid(TComponent)].find(entity.id);
+	if (it != components[typeid(TComponent)].end()) {
+		components[typeid(TComponent)].erase(it);
+	}
+}
+
+template <typename TComponent>
+TComponent& EntityManager::getComponent(Entity entity) {
+	auto& componentPtr = components[typeid(TComponent)][entity.id];
+	return *static_cast<TComponent*>(componentPtr.get());
+}
+
+template <typename TComponent>
+bool EntityManager::hasComponent(Entity entity) {
+	auto it = components[typeid(TComponent)].find(entity.id);
+	return it != components[typeid(TComponent)].end();
+}
+
+template <typename TSystem>
+void EntityManager::registerSystem() {
+	std::unique_ptr<TSystem> system = std::make_unique<TSystem>(*this);
+	systems.push_back(std::move(system));
+}
+
+template <typename... TArgs>
+std::vector<Entity> EntityManager::queryEntitiesWith() {
+	std::vector<Entity> entitiesWithComponents;
+
+	// Iterate over all entities
+	for (const auto& entityPair : entityAlive) {
+		Entity entity(entityPair.first);
+
+		// Check if the entity is alive and has all the required components
+		if (entityAlive[entity.id] && hasComponents<TArgs...>(entity)) {
+			entitiesWithComponents.push_back(entity);
+		}
+	}
+
+	return entitiesWithComponents;
+}
+
+template <typename... TArgs>
+bool EntityManager::hasComponents(Entity entity) {
+	return (hasComponent<TArgs>(entity) && ...);
+}
 
 //-----------------------------------------------------------------------------
 // Singleton accessor

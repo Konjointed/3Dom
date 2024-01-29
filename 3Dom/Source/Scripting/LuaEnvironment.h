@@ -10,6 +10,8 @@ public:
 
 	void startUp();
 	void shutDown();
+
+	void execute(const std::string& filepath);
 private:
 	sol::state m_luaState;
 };

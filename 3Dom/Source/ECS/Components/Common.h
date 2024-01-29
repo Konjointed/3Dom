@@ -27,6 +27,10 @@ public:
 		: translation(translation), rotation(rotation), scale(scale) {}
 };
 
+class MoveComponent : public IComponent {
+
+};
+
 class MeshComponent : public IComponent {
 public:
 	std::string meshName;
@@ -61,6 +65,13 @@ public:
 
 	CameraComponent() : forward(glm::vec3(0.0f, 0.0f, -1.0f)), right(glm::vec3(1.0f, 0.0f, 0.0f)), up(glm::vec3(0.0f, 1.0f, 0.0f)),
 		yaw(0.0f), pitch(0.0f), roll(0.0f), fov(45.0f), aspectRatio(1.0f), nearPlane(0.1f), farPlane(500.0f) {}
+};
+
+class ScriptComponent : public IComponent {
+public:
+	std::string script;
+
+	ScriptComponent(const std::string& filepath) : script(filepath) {}
 };
 
 #endif 
