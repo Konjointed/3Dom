@@ -1,30 +1,34 @@
 #include "Game.h"
 
-#include <iostream>
+#include "Log/Logger.h"
+#include "ECS/EntityManager.h"
+#include "ECS/SystemManager.h"
+#include "ECS/ComponentManager.h"
+#include "ECS/Components/Components.h"
+#include "ECS/Systems/Systems.h"
 
-#include "Resources.h"
+Game gGame;
 
-#include "Subsystems/EntityManager.h"
-#include "Subsystems/SimulationManager.h"
+void test() {
+	gSystemManager.AddSystem<TestSystem>();
 
-#include "Components/Event.h"
+	EntityId entity = gEntityManager.CreateEntity();
+	Tag* tagComponent = gComponentManager.AddComponent<Tag>(entity);
+}
 
-#include "Graphics/Mesh.h"
-#include "Graphics/ShaderProgram.h"
-
-int Game::run(const char* title, int width, int height, bool fullscreen)
+int Game::Run(const char* title, int width, int height, bool fullscreen)
 {
 	if (!startup(title, width, height, fullscreen)) {
-		std::cout << "Game failed to start up\n";
+		spdlog::error("Game start-up failed");
 		return -1;
 	}
 
+	test();
+
 	glEnable(GL_DEPTH_TEST);
 
-	gSimulationManager.createScene();
-
 	float lastFrameTime = 0.0f;
-	while (!quit) {
+	while (!m_quit) {
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			processSDLEvent(event);
@@ -48,9 +52,9 @@ int Game::run(const char* title, int width, int height, bool fullscreen)
 		//	totalTime = 0.0f;
 		//}	
 
-		gEntityManager.update(timestep);
+		gSystemManager.Update(timestep);
 
-		SDL_GL_SwapWindow(window);
+		SDL_GL_SwapWindow(m_window);
 	}
 
 	shutdown();
@@ -64,23 +68,13 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 		return false;
 	}
 
-	loadShaderProgram(gResources, "default", "Resources/Shaders/default.vert", "Resources/Shaders/default.frag");
-	loadMesh(gResources, "Resources/Meshes/suzanne.obj", "suzanne");
-	loadMesh(gResources, "Resources/Meshes/cube.obj", "cube");
-
-	gEntityManager.startUp();
-	gSimulationManager.startUp();
-
 	return true;
 }
 
 void Game::shutdown()
 {
-	gSimulationManager.shutDown();
-	gEntityManager.shutDown();
-
-	SDL_GL_DeleteContext(glContext);
-	SDL_DestroyWindow(window);
+	SDL_GL_DeleteContext(m_glContext);
+	SDL_DestroyWindow(m_window);
 	SDL_Quit();
 }
 
@@ -96,35 +90,27 @@ void Game::processSDLEvent(SDL_Event& event)
 		break;
 	case SDL_QUIT:
 	{
-		quit = true;
+		m_quit = true;
 	}
 	break;
 	case SDL_KEYDOWN:
 	{
-		Entity eventEntity = gEntityManager.createEntity();
-		gEntityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, true));
+
 	}
 	break;
 	case SDL_KEYUP:
 	{
-		Entity eventEntity = gEntityManager.createEntity();
-		gEntityManager.addComponent<KeyEventComponent>(eventEntity, KeyEventComponent(event.key.keysym.sym, false));
+
 	}
 	break;
 	case SDL_MOUSEBUTTONDOWN:
 	{
-		Entity eventEntity = gEntityManager.createEntity();
-		gEntityManager.addComponent<MouseButtonEventComponent>(
-			eventEntity,
-			MouseButtonEventComponent(event.button.button, event.button.x, event.button.y, true));
+
 	}
 	break;
 	case SDL_MOUSEBUTTONUP:
 	{
-		Entity eventEntity = gEntityManager.createEntity();
-		gEntityManager.addComponent<MouseButtonEventComponent>(
-			eventEntity,
-			MouseButtonEventComponent(event.button.button, event.button.x, event.button.y, false));
+
 	}
 	break;
 	case SDL_MOUSEWHEEL:
@@ -133,10 +119,7 @@ void Game::processSDLEvent(SDL_Event& event)
 	break;
 	case SDL_MOUSEMOTION:
 	{
-		Entity eventEntity = gEntityManager.createEntity();
-		gEntityManager.addComponent<MouseMotionEventComponent>(
-			eventEntity,
-			MouseMotionEventComponent(event.motion.x, event.motion.y, event.motion.xrel, event.motion.yrel));
+
 	}
 	break;
 	}
@@ -148,7 +131,7 @@ bool Game::initGame(const char* title, int width, int height, bool fullscreen)
 	// Initialzie SDL
 	//-----------------------------------------------------------------------------
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		std::cout << "SDL error on initialization: " << SDL_GetError() << "\n";
+		spdlog::error("SDL Init {}", SDL_GetError());
 		return false;
 	}
 
@@ -159,18 +142,18 @@ bool Game::initGame(const char* title, int width, int height, bool fullscreen)
 	// Create sdl window
 	//-----------------------------------------------------------------------------
 	const Uint32 windowFlags = (SDL_WINDOW_OPENGL | (fullscreen ? SDL_WINDOW_RESIZABLE : 0));
-	window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, windowFlags);
-	if (!window) {
-		std::cout << "SDL error on create window: " << SDL_GetError() << "\n";
+	m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, windowFlags);
+	if (!m_window) {
+		spdlog::error("SDL Create Window {}", SDL_GetError());
 		return false;
 	}
 	//-----------------------------------------------------------------------------
 	// Create opengl context
 	//-----------------------------------------------------------------------------
-	glContext = SDL_GL_CreateContext(window);
-	if (!glContext) {
-		std::cout << "SDL GL error on create context: " << SDL_GetError() << "\n";
-		SDL_DestroyWindow(window);
+	m_glContext = SDL_GL_CreateContext(m_window);
+	if (!m_glContext) {
+		spdlog::error(" SDL GL Context {}", SDL_GetError());
+		SDL_DestroyWindow(m_window);
 		SDL_Quit();
 		return false;
 	}
@@ -178,9 +161,9 @@ bool Game::initGame(const char* title, int width, int height, bool fullscreen)
 	// Load opengl functions and pointers
 	//-----------------------------------------------------------------------------
 	if (!gladLoadGL()) {
-		std::cout << "GLAD Initialization Error\n";
-		SDL_GL_DeleteContext(glContext);
-		SDL_DestroyWindow(window);
+		spdlog::error("GLAD Init {}", SDL_GetError());
+		SDL_GL_DeleteContext(m_glContext);
+		SDL_DestroyWindow(m_window);
 		SDL_Quit();
 		return false;
 	}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -72,15 +72,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>.\Bin</OutDir>
-    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\SDL2;D:\Github\3Dom\3Dom\Source;D:\Github\3Dom\3Dom\ThirdParty;$(IncludePath)</IncludePath>
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\spdlog;D:\Github\3Dom\3Dom\ThirdParty\SDL2;D:\Github\3Dom\3Dom\Source;D:\Github\3Dom\3Dom\ThirdParty;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Github\3Dom\3Dom\Lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\spdlog;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\spdlog;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\Github\3Dom\3Dom\ThirdParty\spdlog;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,8 +103,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -123,8 +134,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,35 +148,23 @@
   <ItemGroup>
     <ClCompile Include="Compile\glad.c" />
     <ClCompile Include="Compile\stb.cpp" />
-    <ClCompile Include="Source\Subsystems\EntityManager.cpp" />
+    <ClCompile Include="Source\ECS\ComponentManager.cpp" />
+    <ClCompile Include="Source\ECS\EntityManager.cpp" />
     <ClCompile Include="Source\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
-    <ClCompile Include="Source\Graphics\Mesh.cpp" />
-    <ClCompile Include="Source\Subsystems\RenderingPipeline.cpp" />
-    <ClCompile Include="Source\Core\Resources.cpp" />
-    <ClCompile Include="Source\Graphics\ShaderProgram.cpp" />
-    <ClCompile Include="Source\Subsystems\SimulationManager.cpp" />
-    <ClCompile Include="Source\Systems\CameraController.cpp" />
-    <ClCompile Include="Source\Systems\InputSystem.cpp" />
-    <ClCompile Include="Source\Systems\MeshRenderer.cpp" />
+    <ClCompile Include="Source\ECS\SystemManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Components\Event.h" />
-    <ClInclude Include="Source\Components\SingletonInput.h" />
-    <ClInclude Include="Source\Core\IComponent.h" />
-    <ClInclude Include="Source\Components\Common.h" />
-    <ClInclude Include="Source\Core\Entity.h" />
-    <ClInclude Include="Source\Subsystems\EntityManager.h" />
+    <ClInclude Include="Source\ECS\ComponentManager.h" />
+    <ClInclude Include="Source\ECS\Components\Components.h" />
+    <ClInclude Include="Source\ECS\IComponent.h" />
+    <ClInclude Include="Source\ECS\IEntity.h" />
+    <ClInclude Include="Source\ECS\EntityManager.h" />
     <ClInclude Include="Source\Core\Game.h" />
-    <ClInclude Include="Source\Graphics\Mesh.h" />
-    <ClInclude Include="Source\Subsystems\RenderingPipeline.h" />
-    <ClInclude Include="Source\Core\Resources.h" />
-    <ClInclude Include="Source\Graphics\ShaderProgram.h" />
-    <ClInclude Include="Source\Subsystems\SimulationManager.h" />
-    <ClInclude Include="Source\Core\ISystem.h" />
-    <ClInclude Include="Source\Systems\CameraController.h" />
-    <ClInclude Include="Source\Systems\InputSystem.h" />
-    <ClInclude Include="Source\Systems\MeshRenderer.h" />
+    <ClInclude Include="Source\ECS\SystemManager.h" />
+    <ClInclude Include="Source\ECS\ISystem.h" />
+    <ClInclude Include="Source\ECS\Systems\Systems.h" />
+    <ClInclude Include="Source\Log\Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\default.frag" />

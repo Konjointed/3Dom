@@ -7,18 +7,8 @@
 
 class Game {
 public:
-	static Game& get() {
-		static Game instance;
-		return instance;
-	}
-
-	Game(const Game&) = delete;
-	Game& operator=(const Game&) = delete;
-
-	int run(const char* title, int width, int height, bool fullscreen);
+	int Run(const char* title, int width, int height, bool fullscreen);
 private:
-	Game() = default;
-
 	bool startup(const char* title, int width, int height, bool fullscreen);
 	void shutdown();
 
@@ -27,9 +17,11 @@ private:
 	// initializes SDL and OpenGL
 	bool initGame(const char* title, int width, int height, bool fullscreen);
 private:
-	bool quit = false;
-	SDL_Window* window = nullptr;
-	SDL_GLContext glContext = nullptr;
+	bool m_quit = false;
+	SDL_Window* m_window = nullptr;
+	SDL_GLContext m_glContext = nullptr;
 };
+
+extern Game gGame;
 
 #endif 
