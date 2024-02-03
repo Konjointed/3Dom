@@ -1,20 +1,19 @@
 #include "Game.h"
 
+#include "Resources.h"
+
 #include "Log/Logger.h"
+
 #include "ECS/EntityManager.h"
 #include "ECS/SystemManager.h"
 #include "ECS/ComponentManager.h"
 #include "ECS/Components/Components.h"
 #include "ECS/Systems/Systems.h"
 
+#include "Rendering/Mesh.h"
+#include "Rendering/ShaderProgram.h"
+
 Game gGame;
-
-void test() {
-	gSystemManager.AddSystem<TestSystem>();
-
-	EntityId entity = gEntityManager.CreateEntity();
-	Tag* tagComponent = gComponentManager.AddComponent<Tag>(entity);
-}
 
 int Game::Run(const char* title, int width, int height, bool fullscreen)
 {
@@ -23,7 +22,7 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 		return -1;
 	}
 
-	test();
+	CreateScene();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -67,6 +66,8 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 	if (!initGame(title, width, height, fullscreen)) {
 		return false;
 	}
+
+	loadResources(gResources);
 
 	return true;
 }
@@ -169,4 +170,11 @@ bool Game::initGame(const char* title, int width, int height, bool fullscreen)
 	}
 
 	return true;
+}
+
+void Game::loadResources(Resources& resources)
+{
+	LoadShaderProgram(resources, "default", "Resources/Shaders/default.vert", "Resources/Shaders/default.frag");
+	LoadMesh(resources, "Resources/Meshes/cube.obj", "cube");
+	LoadMesh(resources, "Resources/Meshes/suzanne.obj", "suzanne");
 }

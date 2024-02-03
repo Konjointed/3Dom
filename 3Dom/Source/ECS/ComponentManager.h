@@ -52,7 +52,7 @@ TComponent* ComponentManager::AddComponent(EntityId entity, TArgs&&... args)
 	}
 	
 	auto component = std::make_unique<TComponent>(std::forward<TArgs>(args)...);
-	TComponent* rawPtr = component.get();
+	auto* rawPtr = component.get();
 	m_components[entity].push_back(std::move(component));
 	spdlog::info("Component was added to entity ({})", entity);
 	return rawPtr;
@@ -66,7 +66,9 @@ void ComponentManager::RemoveComponent(EntityId entity)
 		return;
 	}
 
-	auto& components = m_components[entity];
+
+
+	TComponent& components = m_components[entity];
 	components.erase(
 		std::remove_if(components.begin(), components.end(),
 			[](const std::unique_ptr<IComponent>& component) {
@@ -96,19 +98,25 @@ template<typename TComponent>
 bool ComponentManager::HasComponent(EntityId entity) const 
 {
 	if (m_components.find(entity) == m_components.end()) {
+		spdlog::warn("Entity ({}) does not exist", entity);
 		return false;
 	}
 
-	const auto& components = m_components.at(entity);
-	for (const auto& component : components) {
+	const auto& componentsEntityHas = m_components.at(entity);
+	for (const auto& component : componentsEntityHas) {
 		if (dynamic_cast<TComponent*>(component.get()) != nullptr) {
+			spdlog::info("Entity ({}) has the component", entity);
 			return true; 
 		}
 	}
 
+	spdlog::info("Entity ({}) does not have the component", entity);
 	return false;
 }
 
+//===========================================================================//
+// Author: ChatGPT
+//===========================================================================//
 template<typename... TComponents>
 std::vector<EntityId> ComponentManager::GetEntitiesWithComponents() 
 {
@@ -133,6 +141,9 @@ std::vector<EntityId> ComponentManager::GetEntitiesWithComponents()
 	return std::vector<EntityId>(resultSet.begin(), resultSet.end());
 }
 
+//===========================================================================//
+// Author: ChatGPT
+//===========================================================================//
 template<typename TComponent>
 std::vector<EntityId> ComponentManager::getEntitiesWithComponent(const std::unordered_map<EntityId, std::vector<std::unique_ptr<IComponent>>>& components) 
 {

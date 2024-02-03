@@ -148,13 +148,17 @@
   <ItemGroup>
     <ClCompile Include="Compile\glad.c" />
     <ClCompile Include="Compile\stb.cpp" />
+    <ClCompile Include="Source\Core\Resources.cpp" />
     <ClCompile Include="Source\ECS\ComponentManager.cpp" />
     <ClCompile Include="Source\ECS\EntityManager.cpp" />
     <ClCompile Include="Source\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
     <ClCompile Include="Source\ECS\SystemManager.cpp" />
+    <ClCompile Include="Source\Rendering\Mesh.cpp" />
+    <ClCompile Include="Source\Rendering\ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Resources.h" />
     <ClInclude Include="Source\ECS\ComponentManager.h" />
     <ClInclude Include="Source\ECS\Components\Components.h" />
     <ClInclude Include="Source\ECS\IComponent.h" />
@@ -165,6 +169,8 @@
     <ClInclude Include="Source\ECS\ISystem.h" />
     <ClInclude Include="Source\ECS\Systems\Systems.h" />
     <ClInclude Include="Source\Log\Logger.h" />
+    <ClInclude Include="Source\Rendering\Mesh.h" />
+    <ClInclude Include="Source\Rendering\ShaderProgram.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\default.frag" />

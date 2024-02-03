@@ -5,6 +5,8 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+struct Resources;
+
 class Game {
 public:
 	int Run(const char* title, int width, int height, bool fullscreen);
@@ -16,6 +18,9 @@ private:
 
 	// initializes SDL and OpenGL
 	bool initGame(const char* title, int width, int height, bool fullscreen);
+
+	// load all the game resources (meshes, sound, textures, etc)
+	void loadResources(Resources& resources);
 private:
 	bool m_quit = false;
 	SDL_Window* m_window = nullptr;

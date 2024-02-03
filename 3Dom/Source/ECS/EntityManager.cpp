@@ -1,5 +1,12 @@
 #include "EntityManager.h"
 
+#include "Log/Logger.h"
+#include "Core/Resources.h"
+#include "ECS/ComponentManager.h"
+#include "ECS/Components/Components.h"
+#include "ECS/SystemManager.h"
+#include "ECS/Systems/Systems.h"
+
 EntityManager gEntityManager;
 
 EntityId EntityManager::CreateEntity()
@@ -32,4 +39,35 @@ void EntityManager::DestroyEntity(EntityId id)
 		// Remove the entity from the list
 		m_entities.erase(it, m_entities.end());
 	}
+}
+
+EntityId EntityManager::GetActiveCamera()
+{
+	return m_activeCamera;
+}
+
+void EntityManager::SetActiveCamera(EntityId entity)
+{
+	if (!gComponentManager.HasComponent<cCamera>(entity)) {
+		spdlog::warn("Entity without the camera component cannot be set as the active camera");
+		return;
+	}
+
+	m_activeCamera = entity;
+	spdlog::info("active camera was set");
+}
+
+void CreateScene() {
+	gSystemManager.AddSystem<RenderSystem>(gResources);
+
+	EntityId entity1 = gEntityManager.CreateEntity();
+	gComponentManager.AddComponent<cTag>(entity1);
+	gComponentManager.AddComponent<cCamera>(entity1);
+	gEntityManager.SetActiveCamera(entity1);
+
+	EntityId entity2 = gEntityManager.CreateEntity();
+	gComponentManager.AddComponent<cTag>(entity2);
+	gComponentManager.AddComponent<cMesh>(entity2, "suzanne");
+	gComponentManager.AddComponent<cTransform>(entity2);
+	gComponentManager.AddComponent<cShader>(entity2, "default");
 }

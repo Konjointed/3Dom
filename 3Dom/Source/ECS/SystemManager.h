@@ -42,11 +42,11 @@ void SystemManager::AddSystem(TArgs&&... args)
 	auto it = std::find_if(m_systems.begin(), m_systems.end(),
 		[](const std::unique_ptr<ISystem>& system) { return dynamic_cast<TSystem*>(system.get()) != nullptr; });
 
-	if (it == m_systems.end()) {
+	if (it == m_systems.end()) { // No system was found so add it
 		spdlog::info("System added");
 		m_systems.emplace_back(std::make_unique<TSystem>(std::forward<TArgs>(args)...));
 	}
-	else {
+	else { // System found don't add it
 		spdlog::warn("System of this type already added");
 		return;
 	}
@@ -64,22 +64,26 @@ void SystemManager::RemoveSystem()
 template<typename TSystem>
 void SystemManager::EnableSystem() 
 {
-	for (auto& system : m_systems) {
-		if (dynamic_cast<TSystem*>(system.get())) {
-			system->m_Enabled = true;
-			break;
-		}
+	auto it = std::find_if(m_systems.begin(), m_systems.end(),
+		[](const std::unique_ptr<ISystem>& system) -> bool {
+			return dynamic_cast<TSystem*>(system.get()) != nullptr;
+		});
+
+	if (it != m_systems.end()) {
+		(*it)->m_Enabled = true;
 	}
 }
 
 template<typename TSystem>
 void SystemManager::DisableSystem() 
 {
-	for (auto& system : m_systems) {
-		if (dynamic_cast<TSystem*>(system.get())) {
-			system->m_Enabled = false;
-			break; 
-		}
+	auto it = std::find_if(m_systems.begin(), m_systems.end(),
+		[](const std::unique_ptr<ISystem>& system) -> bool {
+			return dynamic_cast<TSystem*>(system.get()) != nullptr;
+		});
+
+	if (it != m_systems.end()) {
+		(*it)->m_Enabled = false;
 	}
 }
 
