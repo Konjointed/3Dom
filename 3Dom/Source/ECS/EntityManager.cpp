@@ -60,14 +60,15 @@ void EntityManager::SetActiveCamera(EntityId entity)
 void CreateScene() {
 	gSystemManager.AddSystem<RenderSystem>(gResources);
 
-	EntityId entity1 = gEntityManager.CreateEntity();
-	gComponentManager.AddComponent<cTag>(entity1);
-	gComponentManager.AddComponent<cCamera>(entity1);
-	gEntityManager.SetActiveCamera(entity1);
+	EntityId entity = gEntityManager.CreateEntity();
+	gComponentManager.AddComponent<cTag>(entity, "Camera");
+	gComponentManager.AddComponent<cCamera>(entity);
+	gComponentManager.AddComponent<cInput>(entity);
+	gEntityManager.SetActiveCamera(entity);
 
-	EntityId entity2 = gEntityManager.CreateEntity();
-	gComponentManager.AddComponent<cTag>(entity2);
-	gComponentManager.AddComponent<cMesh>(entity2, "suzanne");
-	gComponentManager.AddComponent<cTransform>(entity2);
-	gComponentManager.AddComponent<cShader>(entity2, "default");
+	entity = gEntityManager.CreateEntity();
+	gComponentManager.AddComponent<cTag>(entity, "Suzanne");
+	gComponentManager.AddComponent<cMesh>(entity, "suzanne");
+	gComponentManager.AddComponent<cTransform>(entity);
+	gComponentManager.AddComponent<cShader>(entity, "default");
 }

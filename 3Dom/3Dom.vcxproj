@@ -154,6 +154,7 @@
     <ClCompile Include="Source\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
     <ClCompile Include="Source\ECS\SystemManager.cpp" />
+    <ClCompile Include="Source\Input\InputManager.cpp" />
     <ClCompile Include="Source\Rendering\Mesh.cpp" />
     <ClCompile Include="Source\Rendering\ShaderProgram.cpp" />
   </ItemGroup>
@@ -168,6 +169,10 @@
     <ClInclude Include="Source\ECS\SystemManager.h" />
     <ClInclude Include="Source\ECS\ISystem.h" />
     <ClInclude Include="Source\ECS\Systems\Systems.h" />
+    <ClInclude Include="Source\Event\IEvent.h" />
+    <ClInclude Include="Source\Event\EventDispatcher.h" />
+    <ClInclude Include="Source\Event\IEventHandler.h" />
+    <ClInclude Include="Source\Input\InputManager.h" />
     <ClInclude Include="Source\Log\Logger.h" />
     <ClInclude Include="Source\Rendering\Mesh.h" />
     <ClInclude Include="Source\Rendering\ShaderProgram.h" />

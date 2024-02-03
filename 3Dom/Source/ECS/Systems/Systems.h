@@ -78,7 +78,7 @@ private:
 	const Resources& m_resources;
 };
 
-class  CameraController : public ISystem {
+class  CameraSystem : public ISystem {
 public:
 	void Update(float timestep) override {
 		std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cCamera, cInput>();
