@@ -59,6 +59,7 @@ void EntityManager::SetActiveCamera(EntityId entity)
 
 void CreateScene() {
 	gSystemManager.AddSystem<RenderSystem>(gResources);
+	gSystemManager.AddSystem<CameraSystem>();
 
 	EntityId entity = gEntityManager.CreateEntity();
 	gComponentManager.AddComponent<cTag>(entity, "Camera");

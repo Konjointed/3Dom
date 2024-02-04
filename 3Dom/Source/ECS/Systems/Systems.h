@@ -13,6 +13,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Log/Logger.h"
+#include "Input/InputManager.h"
 #include "ECS/ISystem.h"
 #include "ECS/IEntity.h"
 #include "ECS/ComponentManager.h"
@@ -81,7 +82,23 @@ private:
 class  CameraSystem : public ISystem {
 public:
 	void Update(float timestep) override {
-		std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cCamera, cInput>();
+		cCamera* cameraComponent = gComponentManager.GetComponent<cCamera>(gEntityManager.GetActiveCamera());
+		//std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cCamera, cInput>();
+		if (gInputManager.IsKeyDown(SDLK_w)) {
+			cameraComponent->m_position += cameraComponent->m_forward * 5.0f * timestep;
+		}
+
+		if (gInputManager.IsKeyDown(SDLK_s)) {
+			cameraComponent->m_position += -cameraComponent->m_forward * 5.0f * timestep;
+		}
+
+		if (gInputManager.IsKeyDown(SDLK_a)) {
+			cameraComponent->m_position += -glm::normalize(glm::cross(cameraComponent->m_forward, cameraComponent->m_up)) * 5.0f * timestep;
+		}
+
+		if (gInputManager.IsKeyDown(SDLK_d)) {
+			cameraComponent->m_position += glm::normalize(glm::cross(cameraComponent->m_forward, cameraComponent->m_up)) * 5.0f * timestep;
+		}
 	}
 };
 

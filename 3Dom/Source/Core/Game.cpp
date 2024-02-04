@@ -3,12 +3,10 @@
 #include "Resources.h"
 
 #include "Log/Logger.h"
-
+#include "Input/InputManager.h"
+#include "Event/EventManager.h"
 #include "ECS/EntityManager.h"
 #include "ECS/SystemManager.h"
-#include "ECS/ComponentManager.h"
-#include "ECS/Components/Components.h"
-#include "ECS/Systems/Systems.h"
 
 #include "Rendering/Mesh.h"
 #include "Rendering/ShaderProgram.h"
@@ -67,6 +65,8 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 		return false;
 	}
 
+	gInputManager.StartUp();
+
 	loadResources(gResources);
 
 	return true;
@@ -74,6 +74,8 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 
 void Game::shutdown()
 {
+	gInputManager.ShutDown();
+
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(m_window);
 	SDL_Quit();
@@ -81,48 +83,48 @@ void Game::shutdown()
 
 void Game::processSDLEvent(SDL_Event& event)
 {
-	switch (event.type) {
-	case SDL_WINDOWEVENT:
-		if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-			int newWidth = event.window.data1;
-			int newHeight = event.window.data2;
-			glViewport(0, 0, newWidth, newHeight);
+	switch (event.type) 
+	{
+		case SDL_WINDOWEVENT:
+		{
+			if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+				int newWidth = event.window.data1;
+				int newHeight = event.window.data2;
+				glViewport(0, 0, newWidth, newHeight);
+			}
+			break;
 		}
-		break;
-	case SDL_QUIT:
-	{
-		m_quit = true;
-	}
-	break;
-	case SDL_KEYDOWN:
-	{
-
-	}
-	break;
-	case SDL_KEYUP:
-	{
-
-	}
-	break;
-	case SDL_MOUSEBUTTONDOWN:
-	{
-
-	}
-	break;
-	case SDL_MOUSEBUTTONUP:
-	{
-
-	}
-	break;
-	case SDL_MOUSEWHEEL:
-	{
-	}
-	break;
-	case SDL_MOUSEMOTION:
-	{
-
-	}
-	break;
+		case SDL_QUIT:
+		{
+			m_quit = true;
+			break;
+		}
+		case SDL_KEYDOWN:
+		{
+			gEventManager.Fire<KeyPressEvent>(event.key.keysym.sym);
+			break;
+		}
+		case SDL_KEYUP:
+		{
+			gEventManager.Fire<KeyReleaseEvent>(event.key.keysym.sym);
+			break;
+		}
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			break;
+		}
+		case SDL_MOUSEBUTTONUP:
+		{
+			break;
+		}
+		case SDL_MOUSEWHEEL:
+		{
+			break;
+		}
+		case SDL_MOUSEMOTION:
+		{
+			break;
+		}
 	}
 }
 
