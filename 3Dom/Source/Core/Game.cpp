@@ -3,6 +3,7 @@
 #include "Resources.h"
 
 #include "Log/Logger.h"
+#include "Scripting/ScriptManager.h"
 #include "Input/InputManager.h"
 #include "Event/EventManager.h"
 #include "ECS/EntityManager.h"
@@ -52,6 +53,8 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 		gSystemManager.Update(timestep);
 		gInputManager.Update();
 
+		gEventManager.Fire<UpdateEvent>(timestep);
+
 		SDL_GL_SwapWindow(m_window);
 	}
 
@@ -66,6 +69,7 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 		return false;
 	}
 
+	gScriptManager.StartUp();
 	gInputManager.StartUp();
 
 	loadResources(gResources);
@@ -76,6 +80,7 @@ bool Game::startup(const char* title, int width, int height, bool fullscreen)
 void Game::shutdown()
 {
 	gInputManager.ShutDown();
+	gScriptManager.ShutDown();
 
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(m_window);

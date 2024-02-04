@@ -6,6 +6,12 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL_mouse.h>
 
+#include "Event/Event.h"
+
+struct UpdateEvent {
+	float m_timestep;
+};
+
 struct KeyPressEvent {
 	SDL_Keycode m_keycode;
 };
@@ -39,12 +45,20 @@ public:
 
 	int DeltaMouseX();
 	int DeltaMouseY();
+
+	Event m_luaKeyPressEvent;
+	Event m_luaKeyReleaseEvent;
+	Event m_luaMouseButtonPressEvent;
+	Event m_luaMouseButtonReleaseEvent;
+	Event m_luaMouseMoveEvent;
+	Event m_luaUpdateEvent;
 private:
 	void onKeyPressed(const KeyPressEvent& event);
 	void onKeyReleased(const KeyReleaseEvent& event);
 	void onMouseButtonPressed(const ButtonPressEvent& event);
 	void onMouseButtonReleased(const ButtonReleaseEvent& event);
 	void onMouseMoved(const MouseMoveEvent& event);
+	void onUpdate(const UpdateEvent& event); // TODO: Move out of input. Perhaps ScriptManager could handle events regarding lua?
 private:
 	int m_currentMouseX, m_currentMouseY;
 	int m_previousMouseX, m_previousMouseY;
