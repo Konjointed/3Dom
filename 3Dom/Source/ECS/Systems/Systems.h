@@ -82,23 +82,50 @@ private:
 class  CameraSystem : public ISystem {
 public:
 	void Update(float timestep) override {
-		cCamera* cameraComponent = gComponentManager.GetComponent<cCamera>(gEntityManager.GetActiveCamera());
 		//std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cCamera, cInput>();
+		cCamera* cameraComponent = gComponentManager.GetComponent<cCamera>(gEntityManager.GetActiveCamera());
+
+		auto forward = cameraComponent->m_forward;
+		auto up = cameraComponent->m_up;
+		auto sensitivty = cameraComponent->m_sensitivity;
+		auto speed = cameraComponent->m_speed;
+
+		// Mouse Input
+		if (gInputManager.IsMouseButtonDown(SDL_BUTTON_RIGHT)) {
+			cameraComponent->m_yaw += gInputManager.DeltaMouseX() * sensitivty;
+			cameraComponent->m_pitch -= gInputManager.DeltaMouseY() * sensitivty;
+			cameraComponent->m_pitch = glm::clamp(cameraComponent->m_pitch, -89.0f, 89.0f);
+		}
+
+		UpdateCameraVectors(cameraComponent);
+
+		// Keyboard Input
 		if (gInputManager.IsKeyDown(SDLK_w)) {
-			cameraComponent->m_position += cameraComponent->m_forward * 5.0f * timestep;
+			cameraComponent->m_position += forward * speed * timestep;
 		}
 
 		if (gInputManager.IsKeyDown(SDLK_s)) {
-			cameraComponent->m_position += -cameraComponent->m_forward * 5.0f * timestep;
+			cameraComponent->m_position += -forward * speed * timestep;
 		}
 
 		if (gInputManager.IsKeyDown(SDLK_a)) {
-			cameraComponent->m_position += -glm::normalize(glm::cross(cameraComponent->m_forward, cameraComponent->m_up)) * 5.0f * timestep;
+			cameraComponent->m_position += -glm::normalize(glm::cross(forward, up)) * speed * timestep;
 		}
 
 		if (gInputManager.IsKeyDown(SDLK_d)) {
-			cameraComponent->m_position += glm::normalize(glm::cross(cameraComponent->m_forward, cameraComponent->m_up)) * 5.0f * timestep;
+			cameraComponent->m_position += glm::normalize(glm::cross(forward, up)) * speed * timestep;
 		}
+	}
+private:
+	void UpdateCameraVectors(cCamera* cameraComponent) {
+		glm::vec3 forward;
+		forward.x = cos(glm::radians(cameraComponent->m_yaw)) * cos(glm::radians(cameraComponent->m_pitch));
+		forward.y = sin(glm::radians(cameraComponent->m_pitch));
+		forward.z = sin(glm::radians(cameraComponent->m_yaw)) * cos(glm::radians(cameraComponent->m_pitch));
+
+		cameraComponent->m_forward = glm::normalize(forward);
+		cameraComponent->m_right = glm::normalize(glm::cross(cameraComponent->m_forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+		cameraComponent->m_up = glm::normalize(glm::cross(cameraComponent->m_right, cameraComponent->m_forward));
 	}
 };
 

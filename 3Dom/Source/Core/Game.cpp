@@ -50,6 +50,7 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 		//}	
 
 		gSystemManager.Update(timestep);
+		gInputManager.Update();
 
 		SDL_GL_SwapWindow(m_window);
 	}
@@ -111,10 +112,12 @@ void Game::processSDLEvent(SDL_Event& event)
 		}
 		case SDL_MOUSEBUTTONDOWN:
 		{
+			gEventManager.Fire<ButtonPressEvent>(event.button.button);
 			break;
 		}
 		case SDL_MOUSEBUTTONUP:
 		{
+			gEventManager.Fire<ButtonReleaseEvent>(event.button.button);
 			break;
 		}
 		case SDL_MOUSEWHEEL:
@@ -123,6 +126,7 @@ void Game::processSDLEvent(SDL_Event& event)
 		}
 		case SDL_MOUSEMOTION:
 		{
+			gEventManager.Fire<MouseMoveEvent>(event.motion.x, event.motion.y);
 			break;
 		}
 	}

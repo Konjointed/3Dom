@@ -53,11 +53,16 @@ public:
 	float m_nearPlane;
 	float m_farPlane;
 
+	float m_speed;
+	float m_sensitivity;
+
 	cCamera() :
 		m_position(glm::vec3(0.0f, 0.0f, 0.0f)),
 		m_forward(glm::vec3(0.0f, 0.0f, -1.0f)), m_right(glm::vec3(1.0f, 0.0f, 0.0f)), m_up(glm::vec3(0.0f, 1.0f, 0.0f)),
 		m_yaw(0.0f), m_pitch(0.0f), m_roll(0.0f), m_fov(70.0f),
-		m_aspectRatio(1.0f), m_nearPlane(0.1f), m_farPlane(500.0f) {}
+		m_aspectRatio(1.0f), m_nearPlane(0.1f), m_farPlane(500.0f),
+		m_speed(5.0f), m_sensitivity(0.1f)
+	{}
 };
 
 class cInput : public IComponent {
