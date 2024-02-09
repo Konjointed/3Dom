@@ -3,14 +3,11 @@
 
 #include <unordered_map>
 
+#include <glm/glm.hpp>
 #include <SDL2/SDL_keycode.h>
 #include <SDL_mouse.h>
 
-#include "Event/Event.h"
-
-struct UpdateEvent {
-	float m_timestep;
-};
+#include "Event/LuaEvent.h"
 
 struct KeyPressEvent {
 	SDL_Keycode m_keycode;
@@ -33,6 +30,11 @@ struct MouseMoveEvent {
 	int m_mouseY;
 };
 
+struct MouseWheelEvent {
+	int m_x;
+	int m_y; 
+};
+
 class InputManager {
 public:
 	void StartUp();
@@ -43,25 +45,29 @@ public:
 	bool IsKeyDown(int key);
 	bool IsMouseButtonDown(int button);
 
-	int DeltaMouseX();
-	int DeltaMouseY();
+	glm::vec2 GetMouseDelta();
 
-	Event m_luaKeyPressEvent;
-	Event m_luaKeyReleaseEvent;
-	Event m_luaMouseButtonPressEvent;
-	Event m_luaMouseButtonReleaseEvent;
-	Event m_luaMouseMoveEvent;
-	Event m_luaUpdateEvent;
+	int GetMouseWheelY();
+
+	LuaEvent m_luaKeyPressEvent;
+	LuaEvent m_luaKeyReleaseEvent;
+	LuaEvent m_luaMouseButtonPressEvent;
+	LuaEvent m_luaMouseButtonReleaseEvent;
+	LuaEvent m_luaMouseMoveEvent;
 private:
+	int getDeltaMouseX();
+	int getDeltaMouseY();
+
 	void onKeyPressed(const KeyPressEvent& event);
 	void onKeyReleased(const KeyReleaseEvent& event);
 	void onMouseButtonPressed(const ButtonPressEvent& event);
 	void onMouseButtonReleased(const ButtonReleaseEvent& event);
 	void onMouseMoved(const MouseMoveEvent& event);
-	void onUpdate(const UpdateEvent& event); // TODO: Move out of input. Perhaps ScriptManager could handle events regarding lua?
+	void onMouseWheel(const MouseWheelEvent& event);
 private:
 	int m_currentMouseX, m_currentMouseY;
 	int m_previousMouseX, m_previousMouseY;
+	int m_mouseWheelY = 0;
 
 	std::unordered_map<int, bool> m_keyState;
 	std::unordered_map<int, bool> m_buttonState;

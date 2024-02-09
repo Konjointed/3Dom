@@ -127,6 +127,7 @@ void Game::processSDLEvent(SDL_Event& event)
 		}
 		case SDL_MOUSEWHEEL:
 		{
+			gEventManager.Fire<MouseWheelEvent>(event.wheel.x, event.wheel.y);
 			break;
 		}
 		case SDL_MOUSEMOTION:

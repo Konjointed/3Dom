@@ -83,9 +83,6 @@
     <ClInclude Include="Source\ECS\Components\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ECS\Systems\Systems.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -104,7 +101,22 @@
     <ClInclude Include="Source\Scripting\ScriptManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Event\Event.h">
+    <ClInclude Include="Source\Event\LuaEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\Systems\InputSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\Systems\CameraSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\Systems\RenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\Systems\MoveSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\Systems\ScriptSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

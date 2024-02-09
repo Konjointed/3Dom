@@ -2,72 +2,94 @@
 #define COMPONENTS_H
 
 #include <string>
+#include <functional>
 
 #include <glm/glm.hpp>
 
 #include "ECS/IComponent.h"
 
-class cTag : public IComponent {
-public:
-	std::string name;
+struct cName : IComponent {
+	std::string m_name;
 
-	cTag(const std::string& name = "unnamed entity") : name(name) {}
+	cName(const std::string& name = "Unnamed Entity") : m_name(name) {}
 };
 
-class cTransform : public IComponent {
-public:
-	glm::vec3 translation;
-	glm::vec3 rotation;
-	glm::vec3 scale;
+struct cTransform : IComponent {
+	glm::vec3 m_translation;
+	glm::vec3 m_rotation;
+	glm::vec3 m_scale;
 
-	cTransform() = default;
+	cTransform()
+		: m_translation(glm::vec3(0.0f, 0.0f, 0.0f)),
+		m_rotation(glm::vec3(0.0f, 0.0f, 0.0f)), 
+		m_scale(glm::vec3(1.0f, 1.0f, 1.0f)) 
+	{}
 };
 
-class cMesh : public IComponent {
-public:
+struct cMesh : IComponent {
 	std::string meshName;
 
 	cMesh(const std::string& id = "none") : meshName(id) {}
 };
 
-// Note: not sure if a shader component is a good idea. circle back to this later (might do a more global approach or fit it into something else)
-class cShader : public IComponent {
-public:
+struct cShader : IComponent {
 	std::string m_shaderProgramName;
 
 	cShader(const std::string& id = "none") : m_shaderProgramName(id) {}
 };
 
-class cCamera : public IComponent {
-public:
-	glm::vec3 m_position;
-	glm::vec3 m_forward;
-	glm::vec3 m_up;
-	glm::vec3 m_right;
+struct cCamera : IComponent {
+	float m_minPitch = -89.0f, m_maxPitch = 89.0f;
+	float m_minDistance = 1.0f, m_maxDistance = 100.0f;
 
+	float m_sensitivity = 0.1f;
+
+	glm::vec3 m_up;
+	glm::vec3 m_front;
 	float m_yaw;
 	float m_pitch;
-	float m_roll;
+
 	float m_fov;
 	float m_aspectRatio;
 	float m_nearPlane;
 	float m_farPlane;
 
-	float m_speed;
-	float m_sensitivity;
+	glm::mat4 m_viewMatrix;
+	glm::mat4 m_projectionMatrix;
 
-	cCamera() :
-		m_position(glm::vec3(0.0f, 0.0f, 0.0f)),
-		m_forward(glm::vec3(0.0f, 0.0f, -1.0f)), m_right(glm::vec3(1.0f, 0.0f, 0.0f)), m_up(glm::vec3(0.0f, 1.0f, 0.0f)),
-		m_yaw(0.0f), m_pitch(0.0f), m_roll(0.0f), m_fov(70.0f),
-		m_aspectRatio(1.0f), m_nearPlane(0.1f), m_farPlane(500.0f),
-		m_speed(5.0f), m_sensitivity(0.1f)
-	{}
+	cCamera()
+		: m_fov(70.0f), m_aspectRatio(1.777778f), m_nearPlane(0.1f), m_farPlane(500.0f),
+		m_up(glm::vec3(0.0f, 1.0f, 0.0f)), m_front(glm::vec3(0.0f, 0.0f, -1.0f)),
+		m_yaw(-90.0f), m_pitch(0.0f) {}
 };
 
-class cInput : public IComponent {
-public:
+struct cFreeMovement : IComponent {
+	float m_speed = 5.0f;
+};
+
+struct cFollowSubject : IComponent {
+	float m_distance = 5.0f;
+	float m_zoomSpeed = 15.0f;
+};
+
+struct cCameraSubject : IComponent {
+	cCameraSubject() = default;
+};
+
+struct cInput : IComponent {
 	cInput() = default;
+};
+
+struct cMove : IComponent {
+	glm::vec3 m_direction = glm::vec3(0.0f);
+	float m_speed = 5.0f;
+
+	cMove() = default;
+};
+
+struct cScript : IComponent {
+	std::function<void(EntityId&, float)> m_script;
+	cScript(std::function<void(EntityId&, float)> script) : m_script(script) {}
 };
 
 #endif 

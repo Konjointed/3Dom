@@ -9,7 +9,8 @@
 #include <memory>
 
 #include "Log/Logger.h"
-#include "IComponent.h"
+#include "ECS/IComponent.h"
+#include "ECS/Components/Components.h"
 
 class ComponentManager {
 public:

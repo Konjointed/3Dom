@@ -12,7 +12,7 @@ void InputManager::StartUp()
     gEventManager.Connect<ButtonPressEvent>(this, &InputManager::onMouseButtonPressed);
     gEventManager.Connect<ButtonReleaseEvent>(this, &InputManager::onMouseButtonReleased);
     gEventManager.Connect<MouseMoveEvent>(this, &InputManager::onMouseMoved);
-    gEventManager.Connect<UpdateEvent>(this, &InputManager::onUpdate);
+    gEventManager.Connect<MouseWheelEvent>(this, &InputManager::onMouseWheel);
 }
 
 void InputManager::ShutDown()
@@ -43,26 +43,39 @@ bool InputManager::IsMouseButtonDown(int button)
     return false;
 }
 
-int InputManager::DeltaMouseX()
+glm::vec2 InputManager::GetMouseDelta()
+{
+    return glm::vec2(getDeltaMouseX(), getDeltaMouseY());
+}
+
+int InputManager::GetMouseWheelY()
+{
+    int value = m_mouseWheelY;
+    m_mouseWheelY = 0;
+    return value;
+}
+
+int InputManager::getDeltaMouseX()
 {
     return m_currentMouseX - m_previousMouseX;
 }
 
-int InputManager::DeltaMouseY()
+int InputManager::getDeltaMouseY()
 {
     return m_currentMouseY - m_previousMouseY;
 }
 
+
 void InputManager::onKeyPressed(const KeyPressEvent& event)
 {
     m_keyState[event.m_keycode] = true;
-    m_luaKeyPressEvent.Trigger(event.m_keycode);
+    m_luaKeyPressEvent(event.m_keycode);
 }
 
 void InputManager::onKeyReleased(const KeyReleaseEvent& event)
 {
     m_keyState[event.m_keycode] = false;
-    m_luaKeyReleaseEvent.Trigger(event.m_keycode);
+    m_luaKeyReleaseEvent(event.m_keycode);
 }
 
 void InputManager::onMouseButtonPressed(const ButtonPressEvent& event)
@@ -81,7 +94,7 @@ void InputManager::onMouseMoved(const MouseMoveEvent& event)
     m_currentMouseY = event.m_mouseY;
 }
 
-void InputManager::onUpdate(const UpdateEvent& event)
+void InputManager::onMouseWheel(const MouseWheelEvent& event)
 {
-    m_luaUpdateEvent.Trigger(event.m_timestep);
+    m_mouseWheelY = event.m_y;
 }

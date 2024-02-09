@@ -1,4 +1,5 @@
-input.Update:Connect(function(deltaTime)
+--[[
+game.Update:Connect(function(deltaTime)
     if input:IsKeyDown(119) then
         print("w key pressed")
     end
@@ -11,3 +12,4 @@ end)
 input.KeyRelease:Connect(function(key)
     print("Key released: " .. key)
 end)
+]]

@@ -1,6 +1,9 @@
 #ifndef ISYSTEM_H
 #define ISYSTEM_H
 
+#include "ECS/IEntity.h"
+#include "ECS/ComponentManager.h"
+
 class ISystem {
 public:
 	bool m_Enabled = true;
