@@ -7,112 +7,78 @@
 #include "Log/Logger.h"
 #include "Input/InputManager.h"
 #include "ECS/ISystem.h"
+#include "ECS/EntityManager.h"
 
-//class CameraSystem : public ISystem {
-//public:
-//
-//};
-
-class CameraFollowSystem : public ISystem {
+class CameraSystem : public ISystem {
 public:
 	void Update(float timestep) override {
-		std::vector<EntityId> subjects = gComponentManager.GetEntitiesWithComponents<cCameraSubject, cTransform>();
-		if (subjects.empty()) return;
-		EntityId subjectEntity = subjects.at(0);
-		auto* subjectTransform = gComponentManager.GetComponent<cTransform>(subjectEntity);
+		auto& singletonCamera = gComponentManager.GetSingletonCamera();
 
-		std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cCamera, cTransform, cFollowSubject>();
+		std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cFollowTarget, cTransform>();
 		for (EntityId& entity : entities) {
-			auto* camera = gComponentManager.GetComponent<cCamera>(entity);
-			auto* cameraTransform = gComponentManager.GetComponent<cTransform>(entity);
-			auto* cameraFollowSubject = gComponentManager.GetComponent<cFollowSubject>(entity);
+			auto* transform = gComponentManager.GetComponent<cTransform>(entity);
+			auto* target = gComponentManager.GetComponent<cFollowTarget>(entity);
+			auto* targetTransform = gComponentManager.GetComponent<cTransform>(target->m_target);
 
-			if (gInputManager.IsMouseButtonDown(SDL_BUTTON_RIGHT)) {
-				glm::vec2 mouseDelta = gInputManager.GetMouseDelta();
-
-				camera->m_yaw += mouseDelta.x * camera->m_sensitivity;
-				camera->m_pitch -= mouseDelta.y * camera->m_sensitivity;
-
-				if (camera->m_pitch > camera->m_maxPitch) camera->m_pitch = camera->m_maxPitch;
-				if (camera->m_pitch < camera->m_minPitch) camera->m_pitch = camera->m_minPitch;
+			if (gInputManager.IsKeyDown(SDLK_c)) {
+				singletonCamera.m_free = !singletonCamera.m_free;
 			}
 
-			int mouseWheelY = gInputManager.GetMouseWheelY();
-			if (mouseWheelY != 0) {
-				cameraFollowSubject->m_distance -= mouseWheelY * cameraFollowSubject->m_zoomSpeed * timestep;
-				cameraFollowSubject->m_distance = glm::clamp(cameraFollowSubject->m_distance, camera->m_minDistance, camera->m_maxDistance);
+			// Rotate camera
+			if (gInputManager.IsMouseButtonDown(SDL_BUTTON_RIGHT)) {
+				glm::vec2 mouseDelta = gInputManager.GetMouseDelta();
+				singletonCamera.m_yaw += mouseDelta.x * singletonCamera.m_sensitivity;
+				singletonCamera.m_pitch -= mouseDelta.y * singletonCamera.m_sensitivity;
+				singletonCamera.m_pitch = glm::clamp(singletonCamera.m_pitch, singletonCamera.m_minPitch, singletonCamera.m_maxPitch);
+			}
+
+			// Zoom in/out
+			int mouseWheel = gInputManager.GetMouseWheelDelta();
+			if (mouseWheel != 0) {
+				singletonCamera.m_distance -= mouseWheel * singletonCamera.m_zoomSpeed * timestep;
 			}
 
 			glm::vec3 direction;
-			direction.x = cos(glm::radians(camera->m_yaw)) * cos(glm::radians(camera->m_pitch));
-			direction.y = sin(glm::radians(camera->m_pitch));
-			direction.z = sin(glm::radians(camera->m_yaw)) * cos(glm::radians(camera->m_pitch));
+			direction.x = cos(glm::radians(singletonCamera.m_yaw)) * cos(glm::radians(singletonCamera.m_pitch));
+			direction.y = sin(glm::radians(singletonCamera.m_pitch));
+			direction.z = sin(glm::radians(singletonCamera.m_yaw)) * cos(glm::radians(singletonCamera.m_pitch));
 			direction = glm::normalize(direction);
 
-			glm::vec3 cameraPosition = subjectTransform->m_translation - direction * cameraFollowSubject->m_distance;
-			cameraTransform->m_translation = cameraPosition;
-
-			camera->m_viewMatrix = glm::lookAt(
-				cameraTransform->m_translation,
-				subjectTransform->m_translation,
-				camera->m_up
-			);
-
-			camera->m_projectionMatrix = glm::perspective(
-				glm::radians(camera->m_fov),
-				camera->m_aspectRatio,
-				camera->m_nearPlane,
-				camera->m_farPlane
-			);
-		}
-	}
-};
-
-class CameraFreeSystem : public ISystem {
-public:
-	void Update(float timestep) override {
-		std::vector<EntityId> entities = gComponentManager.GetEntitiesWithComponents<cCamera, cTransform, cFreeMovement>();
-		for (EntityId& entity : entities) {
-			auto* camera = gComponentManager.GetComponent<cCamera>(entity);
-			auto* cameraTransform = gComponentManager.GetComponent<cTransform>(entity);
-			auto* cameraFreeMovement = gComponentManager.GetComponent<cFreeMovement>(entity);
-			auto* move = gComponentManager.GetComponent<cMove>(entity);
-
-			// Pivot (adjust pitch and yaw)
-			if (gInputManager.IsMouseButtonDown(SDL_BUTTON_RIGHT)) {
-				glm::vec2 mouseDelta = gInputManager.GetMouseDelta();
-
-				camera->m_yaw += mouseDelta.x * camera->m_sensitivity;
-				camera->m_pitch -= mouseDelta.y * camera->m_sensitivity;
-
-				// Clamp pitch value to prevent flipping
-				if (camera->m_pitch > camera->m_maxPitch)
-					camera->m_pitch = camera->m_maxPitch;
-				if (camera->m_pitch < camera->m_minPitch)
-					camera->m_pitch = camera->m_minPitch;
-
-				// Update camera front vector
-				glm::vec3 front;
-				front.x = cos(glm::radians(camera->m_yaw)) * cos(glm::radians(camera->m_pitch));
-				front.y = sin(glm::radians(camera->m_pitch));
-				front.z = sin(glm::radians(camera->m_yaw)) * cos(glm::radians(camera->m_pitch));
-				camera->m_front = glm::normalize(front);
+			if (!singletonCamera.m_free && targetTransform) {
+				// Camera is attached to a target
+				glm::vec3 cameraPosition = targetTransform->m_position - direction * singletonCamera.m_distance;
+				transform->m_position = cameraPosition;
+			}
+			else {
+				// Free movement
+				if (gInputManager.IsKeyDown(SDLK_w)) {
+					transform->m_position += direction * singletonCamera.m_zoomSpeed * timestep;
+				}
+				if (gInputManager.IsKeyDown(SDLK_s)) {
+					transform->m_position -= direction * singletonCamera.m_zoomSpeed * timestep;
+				}
+				if (gInputManager.IsKeyDown(SDLK_a)) {
+					glm::vec3 left = glm::normalize(glm::cross(singletonCamera.m_up, direction));
+					transform->m_position += left * singletonCamera.m_zoomSpeed * timestep;
+				}
+				if (gInputManager.IsKeyDown(SDLK_d)) {
+					glm::vec3 right = glm::normalize(glm::cross(direction, singletonCamera.m_up));
+					transform->m_position += right * singletonCamera.m_zoomSpeed * timestep;
+				}
 			}
 
-			// Calculate the right vector for strafing movements
-			glm::vec3 right = glm::normalize(glm::cross(camera->m_front, camera->m_up));
-			// Calculate the up vector for vertical movements (not typically used for camera movement in most FPS games, but can be useful for other types of 3D games)
-			glm::vec3 up = glm::normalize(glm::cross(right, camera->m_front));
+			singletonCamera.m_viewMatrix = glm::lookAt(
+				transform->m_position,
+				singletonCamera.m_free ? transform->m_position + direction : targetTransform->m_position,
+				singletonCamera.m_up
+			);
 
-			// Move the camera based on the move component's direction
-			glm::vec3 movement = (camera->m_front * move->m_direction.z + right * move->m_direction.x) * move->m_speed * timestep;
-			cameraTransform->m_translation += movement;
-
-			// Update camera's view matrix based on new position and front vector
-			camera->m_viewMatrix = glm::lookAt(cameraTransform->m_translation, cameraTransform->m_translation + camera->m_front, camera->m_up);
-
-			// Projection matrix update (only if necessary)
-			camera->m_projectionMatrix = glm::perspective(glm::radians(camera->m_fov), camera->m_aspectRatio, camera->m_nearPlane, camera->m_farPlane);
+			singletonCamera.m_projectionMatrix = glm::perspective(
+				glm::radians(singletonCamera.m_fov),
+				singletonCamera.m_aspectRatio,
+				singletonCamera.m_nearPlane,
+				singletonCamera.m_farPlane
+			);
 		}
 	}
 };

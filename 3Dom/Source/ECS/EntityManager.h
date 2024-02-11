@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <queue>
+#include <string>
 
 #include "IEntity.h"
 
@@ -11,20 +12,20 @@
 
 class EntityManager {
 public:
-	EntityId CreateEntity();
+	void StartUp();
+	void ShutDown();
+	EntityId CreateEntity(const std::string& name);
 	void DestroyEntity(EntityId id);
 
-	EntityId GetActiveCamera();
-	void SetActiveCamera(EntityId entity);
+	EntityId& GetCamera();
+	void SetCamera(EntityId camera);
 private:
 	std::vector<std::unique_ptr<IEntity>> m_entities;
 	std::queue<EntityId> m_freeIds;
 	EntityId m_nextId;
 
-	EntityId m_activeCamera;
+	EntityId m_camera;
 };
-
-void CreateScene();
 
 extern EntityManager gEntityManager;
 

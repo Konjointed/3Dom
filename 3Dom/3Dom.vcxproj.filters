@@ -54,6 +54,18 @@
     <ClCompile Include="Source\Scripting\ScriptManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Rendering\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\Buffers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering\RenderingPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ECS\RenderSystems\DirectionalLightSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\Game.h">
@@ -110,13 +122,34 @@
     <ClInclude Include="Source\ECS\Systems\CameraSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ECS\Systems\RenderSystem.h">
+    <ClInclude Include="Source\ECS\RenderSystems\DirectionalLightSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\ECS\Systems\MoveSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ECS\Systems\ScriptSystem.h">
+    <ClInclude Include="Source\ECS\Systems\BehaviorSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\Systems\PlayerController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Behavior\Player\Movement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\RenderSystems\ShadowRenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\Buffers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ECS\IRenderSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Rendering\RenderingPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -124,5 +157,10 @@
     <None Include="Resources\Shaders\default.vert" />
     <None Include="Resources\Shaders\default.frag" />
     <None Include="Resources\Scripts\script.lua" />
+    <None Include="Resources\Shaders\shadowMapping.vert" />
+    <None Include="Resources\Shaders\shadowMapping.frag" />
+    <None Include="Resources\Shaders\shadowMappingDepth.vert" />
+    <None Include="Resources\Shaders\shadowMappingDepth.frag" />
+    <None Include="Resources\Shaders\shadowMappingDepth.geom" />
   </ItemGroup>
 </Project>

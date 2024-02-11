@@ -52,6 +52,12 @@ Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene)
         }
     }
 
+    //aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    //std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    //std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    //std::vector<Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    //std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+     
     //-----------------------------------------------------------------------------
     // Create buffers/arrays
     //-----------------------------------------------------------------------------
@@ -70,7 +76,7 @@ Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
     //-----------------------------------------------------------------------------
-    // Set vertex attributes pointers
+    // Set vertex attributes pointers 
     //-----------------------------------------------------------------------------
     // Position 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);

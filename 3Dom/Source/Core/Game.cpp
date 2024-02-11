@@ -3,12 +3,13 @@
 #include "Resources.h"
 
 #include "Log/Logger.h"
+#include "Core/Resources.h"
 #include "Scripting/ScriptManager.h"
 #include "Input/InputManager.h"
 #include "Event/EventManager.h"
 #include "ECS/EntityManager.h"
 #include "ECS/SystemManager.h"
-
+#include "Rendering/RenderingPipeline.h"
 #include "Rendering/Mesh.h"
 #include "Rendering/ShaderProgram.h"
 
@@ -16,12 +17,10 @@ Game gGame;
 
 int Game::Run(const char* title, int width, int height, bool fullscreen)
 {
-	if (!startup(title, width, height, fullscreen)) {
+	if (!startup(title, width, height, fullscreen, gResources)) {
 		spdlog::error("Game start-up failed");
 		return -1;
 	}
-
-	CreateScene();
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -53,7 +52,12 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 		gSystemManager.Update(timestep);
 		gInputManager.Update();
 
+		gRenderingPipeline.Execute();
+
 		gEventManager.Fire<UpdateEvent>(timestep);
+
+		ShaderProgram& program = gResources.m_shaderPrograms["shadow"];
+		program.ReloadShadersIfNeeded();
 
 		SDL_GL_SwapWindow(m_window);
 	}
@@ -63,16 +67,26 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 	return 0;
 }
 
-bool Game::startup(const char* title, int width, int height, bool fullscreen)
+bool Game::startup(const char* title, int width, int height, bool fullscreen, Resources& resources)
 {
 	if (!initGame(title, width, height, fullscreen)) {
 		return false;
 	}
 
+	LoadShaderProgram(resources, "default", "Resources/Shaders/default.vert", "Resources/Shaders/default.frag");
+	LoadShaderProgram(resources, "shadow", "Resources/Shaders/shadowMapping.vert", "Resources/Shaders/shadowMapping.frag");
+	LoadShaderProgram(resources, "depth", "Resources/Shaders/shadowMappingDepth.vert", "Resources/Shaders/shadowMappingDepth.frag", "Resources/Shaders/shadowMappingDepth.geom");
+	LoadTexture(resources, "Resources/Textures/wood.png", "wood", false);
+	LoadTexture(resources, "Resources/Textures/brickwall.jpg", "brickwall", false);
+	LoadMesh(resources, "Resources/Meshes/cube.obj", "cube");
+	LoadMesh(resources, "Resources/Meshes/suzanne.obj", "suzanne");
+	LoadMesh(resources, "Resources/Meshes/Maria/Maria J J Ong.dae", "maria");
+
+	gRenderingPipeline.StartUp();
+	gSystemManager.StartUp();
+	gEntityManager.StartUp();
 	gScriptManager.StartUp();
 	gInputManager.StartUp();
-
-	loadResources(gResources);
 
 	return true;
 }
@@ -81,6 +95,9 @@ void Game::shutdown()
 {
 	gInputManager.ShutDown();
 	gScriptManager.ShutDown();
+	gEntityManager.ShutDown();
+	gSystemManager.ShutDown();
+	gRenderingPipeline.ShutDown();
 
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(m_window);
@@ -182,11 +199,4 @@ bool Game::initGame(const char* title, int width, int height, bool fullscreen)
 	}
 
 	return true;
-}
-
-void Game::loadResources(Resources& resources)
-{
-	LoadShaderProgram(resources, "default", "Resources/Shaders/default.vert", "Resources/Shaders/default.frag");
-	LoadMesh(resources, "Resources/Meshes/cube.obj", "cube");
-	LoadMesh(resources, "Resources/Meshes/suzanne.obj", "suzanne");
 }

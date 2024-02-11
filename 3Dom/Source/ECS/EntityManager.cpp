@@ -1,19 +1,40 @@
 #include "EntityManager.h"
 
 #include "Log/Logger.h"
-#include "Core/Resources.h"
 #include "ECS/ComponentManager.h"
 #include "ECS/Components/Components.h"
-#include "ECS/SystemManager.h"
-#include "ECS/Systems/RenderSystem.h"
-#include "ECS/Systems/InputSystem.h"
-#include "ECS/Systems/CameraSystem.h"
-#include "ECS/Systems/MoveSystem.h"
-#include "ECS/Systems/ScriptSystem.h"
+#include "Behavior/Player/Movement.h"
 
 EntityManager gEntityManager;
 
-EntityId EntityManager::CreateEntity()
+void EntityManager::StartUp()
+{
+	EntityId staticEntity = gEntityManager.CreateEntity("Static Entity");
+	gComponentManager.AddComponent<cMesh>(staticEntity, "cube", "brickwall");
+	gComponentManager.AddComponent<cShader>(staticEntity, "default");
+
+	EntityId staticEntity2 = gEntityManager.CreateEntity("Static Entity 2");
+	gComponentManager.AddComponent<cMesh>(staticEntity2, "cube", "wood");
+	gComponentManager.AddComponent<cShader>(staticEntity2, "default");
+	auto* transform = gComponentManager.GetComponent<cTransform>(staticEntity2);
+	transform->m_position = glm::vec3(0.0f, 5.0f, 0.0f);
+
+	EntityId playerEntity = gEntityManager.CreateEntity("Player");
+	gComponentManager.AddComponent<cMesh>(playerEntity, "suzanne", "wood");
+	gComponentManager.AddComponent<cShader>(playerEntity, "default");
+	gComponentManager.AddComponent<cMove>(playerEntity);
+	gComponentManager.AddComponent<cBehavior>(playerEntity, PlayerMovementBehavior);
+
+	EntityId cameraEntity = gEntityManager.CreateEntity("Camera");
+	gComponentManager.AddComponent<cFollowTarget>(cameraEntity, playerEntity);
+	SetCamera(cameraEntity);
+}
+
+void EntityManager::ShutDown()
+{
+}
+
+EntityId EntityManager::CreateEntity(const std::string& name)
 {
 	EntityId newId;
 
@@ -25,9 +46,13 @@ EntityId EntityManager::CreateEntity()
 		newId = m_nextId++;
 	}
 
-	auto entity = new IEntity();
+	auto* entity = new IEntity();
 	entity->m_ID = newId;
+
 	m_entities.push_back(std::unique_ptr<IEntity>(entity));
+
+	gComponentManager.AddComponent<cName>(entity->m_ID, name);
+	gComponentManager.AddComponent<cTransform>(entity->m_ID);
 
 	return newId;
 }
@@ -45,50 +70,12 @@ void EntityManager::DestroyEntity(EntityId id)
 	}
 }
 
-EntityId EntityManager::GetActiveCamera()
+EntityId& EntityManager::GetCamera()
 {
-	return m_activeCamera;
+	return m_camera;
 }
 
-void EntityManager::SetActiveCamera(EntityId entity)
+void EntityManager::SetCamera(EntityId camera)
 {
-	if (!gComponentManager.HasComponent<cCamera>(entity)) {
-		spdlog::warn("Entity without the camera component cannot be set as the active camera");
-		return;
-	}
-
-	m_activeCamera = entity;
-	spdlog::info("active camera was set");
-}
-
-void CreateScene() {
-	gSystemManager.AddSystem<InputSystem>();
-	gSystemManager.AddSystem<RenderSystem>(gResources);
-	gSystemManager.AddSystem<MoveSystem>();
-	gSystemManager.AddSystem<CameraFollowSystem>();
-	gSystemManager.AddSystem<CameraFreeSystem>();
-
-	EntityId cameraEntity = gEntityManager.CreateEntity();
-	gComponentManager.AddComponent<cName>(cameraEntity, "Camera");
-	gComponentManager.AddComponent<cTransform>(cameraEntity);
-	gComponentManager.AddComponent<cCamera>(cameraEntity);
-	gComponentManager.AddComponent<cInput>(cameraEntity);
-	gComponentManager.AddComponent<cMove>(cameraEntity);
-	gComponentManager.AddComponent<cFreeMovement>(cameraEntity);
-	gEntityManager.SetActiveCamera(cameraEntity);
-
-	EntityId playerEntity = gEntityManager.CreateEntity();
-	gComponentManager.AddComponent<cName>(playerEntity, "Player");
-	gComponentManager.AddComponent<cTransform>(playerEntity);
-	gComponentManager.AddComponent<cMesh>(playerEntity, "suzanne");
-	gComponentManager.AddComponent<cShader>(playerEntity, "default");
-	//gComponentManager.AddComponent<cCameraSubject>(playerEntity);
-	//gComponentManager.AddComponent<cInput>(playerEntity);
-	//gComponentManager.AddComponent<cMove>(playerEntity);
-
-	EntityId staticEntity = gEntityManager.CreateEntity();
-	gComponentManager.AddComponent<cName>(staticEntity, "Static Entity");
-	gComponentManager.AddComponent<cTransform>(staticEntity);
-	gComponentManager.AddComponent<cMesh>(staticEntity, "cube");
-	gComponentManager.AddComponent<cShader>(staticEntity, "default");
+	m_camera = camera;
 }

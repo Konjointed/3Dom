@@ -8,7 +8,13 @@
 #include "Log/Logger.h"
 #include "Core/Resources.h"
 
-void ShaderProgram::SetUniform(const std::string& name, float value)
+void ShaderProgram::SetUniformInt(const std::string& name, int value)
+{
+	GLint location = glGetUniformLocation(m_id, name.c_str());
+	glUniform1i(location, value);
+}
+
+void ShaderProgram::SetUniformFloat(const std::string& name, float value)
 {
 	GLint location = glGetUniformLocation(m_id, name.c_str());
 	glUniform1f(location, value);
@@ -24,6 +30,36 @@ void ShaderProgram::SetUniform(const std::string& name, const glm::mat4& value)
 {
 	GLint location = glGetUniformLocation(m_id, name.c_str());
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+}
+
+void ShaderProgram::ReloadShadersIfNeeded() {
+	bool needsReloading = false;
+	for (auto& shader : m_shaders) {
+		auto currentModTime = std::filesystem::last_write_time(shader.m_filepath);
+		if (shader.lastModified < currentModTime) {
+			needsReloading = true;
+			shader.lastModified = currentModTime; // Update the last modification time
+		}
+	}
+
+	if (needsReloading) {
+		spdlog::info("needs reloading");
+
+		// Detach existing shaders
+		for (auto& shader : m_shaders) {
+			glDetachShader(m_id, shader.m_id);
+			glDeleteShader(shader.m_id);
+		}
+
+		// Recompile shaders
+		for (auto& shader : m_shaders) {
+			shader.m_id = CompileShader(shader.m_type, shader.m_filepath).m_id;
+			glAttachShader(m_id, shader.m_id);
+		}
+
+		// Relink the program
+		LinkShaderProgram(*this);
+	}
 }
 
 void CompileShaderAndAddToProgram(ShaderProgram& program, GLenum type, const std::string& filepath)
@@ -101,18 +137,24 @@ void LinkShaderProgram(ShaderProgram& program)
 	}
 }
 
-void LoadShaderProgram(Resources& resources, 
-	const std::string name, 
-	const std::string vertexShaderPath, 
-	const std::string fragShaderPath) 
+void LoadShaderProgram(Resources& resources,
+	const std::string name,
+	const std::string vertexShaderPath,
+	const std::string fragShaderPath,
+	const std::string geomShaderPath) // Optional geometry shader path
 {
 	ShaderProgram program;
-	program.m_id = glCreateProgram();
 
 	CompileShaderAndAddToProgram(program, GL_VERTEX_SHADER, vertexShaderPath);
 	CompileShaderAndAddToProgram(program, GL_FRAGMENT_SHADER, fragShaderPath);
 
+	// Check if a geometry shader path was provided and compile it
+	if (!geomShaderPath.empty()) {
+		CompileShaderAndAddToProgram(program, GL_GEOMETRY_SHADER, geomShaderPath);
+	}
+
 	LinkShaderProgram(program);
 
+	// Assuming Resources is a structure that holds shader programs
 	resources.m_shaderPrograms.emplace(name, program);
 }

@@ -46,8 +46,7 @@ public:
 	bool IsMouseButtonDown(int button);
 
 	glm::vec2 GetMouseDelta();
-
-	int GetMouseWheelY();
+	int GetMouseWheelDelta();
 
 	LuaEvent m_luaKeyPressEvent;
 	LuaEvent m_luaKeyReleaseEvent;
@@ -57,6 +56,7 @@ public:
 private:
 	int getDeltaMouseX();
 	int getDeltaMouseY();
+	int getMouseWheel();
 
 	void onKeyPressed(const KeyPressEvent& event);
 	void onKeyReleased(const KeyReleaseEvent& event);
@@ -67,7 +67,7 @@ private:
 private:
 	int m_currentMouseX, m_currentMouseY;
 	int m_previousMouseX, m_previousMouseY;
-	int m_mouseWheelY = 0;
+	int m_mouseWheel = 0;
 
 	std::unordered_map<int, bool> m_keyState;
 	std::unordered_map<int, bool> m_buttonState;

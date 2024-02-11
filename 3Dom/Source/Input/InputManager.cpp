@@ -48,12 +48,17 @@ glm::vec2 InputManager::GetMouseDelta()
     return glm::vec2(getDeltaMouseX(), getDeltaMouseY());
 }
 
-int InputManager::GetMouseWheelY()
+int InputManager::GetMouseWheelDelta() {
+    return getMouseWheel();
+}
+
+int InputManager::getMouseWheel()
 {
-    int value = m_mouseWheelY;
-    m_mouseWheelY = 0;
+    int value = m_mouseWheel;
+    m_mouseWheel = 0;
     return value;
 }
+
 
 int InputManager::getDeltaMouseX()
 {
@@ -96,5 +101,5 @@ void InputManager::onMouseMoved(const MouseMoveEvent& event)
 
 void InputManager::onMouseWheel(const MouseWheelEvent& event)
 {
-    m_mouseWheelY = event.m_y;
+    m_mouseWheel = event.m_y;
 }

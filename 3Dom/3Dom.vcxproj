@@ -156,14 +156,19 @@
     <ClCompile Include="Source\ECS\EntityManager.cpp" />
     <ClCompile Include="Source\Core\EntryPoint.cpp" />
     <ClCompile Include="Source\Core\Game.cpp" />
+    <ClCompile Include="Source\ECS\RenderSystems\DirectionalLightSystem.cpp" />
     <ClCompile Include="Source\ECS\SystemManager.cpp" />
     <ClCompile Include="Source\Event\EventManager.cpp" />
     <ClCompile Include="Source\Input\InputManager.cpp" />
+    <ClCompile Include="Source\Rendering\Buffers.cpp" />
     <ClCompile Include="Source\Rendering\Mesh.cpp" />
+    <ClCompile Include="Source\Rendering\RenderingPipeline.cpp" />
     <ClCompile Include="Source\Rendering\ShaderProgram.cpp" />
+    <ClCompile Include="Source\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Scripting\ScriptManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Behavior\Player\Movement.h" />
     <ClInclude Include="Source\Core\Resources.h" />
     <ClInclude Include="Source\ECS\ComponentManager.h" />
     <ClInclude Include="Source\ECS\Components\Components.h" />
@@ -171,25 +176,36 @@
     <ClInclude Include="Source\ECS\IEntity.h" />
     <ClInclude Include="Source\ECS\EntityManager.h" />
     <ClInclude Include="Source\Core\Game.h" />
+    <ClInclude Include="Source\ECS\IRenderSystem.h" />
     <ClInclude Include="Source\ECS\SystemManager.h" />
     <ClInclude Include="Source\ECS\ISystem.h" />
     <ClInclude Include="Source\ECS\Systems\CameraSystem.h" />
     <ClInclude Include="Source\ECS\Systems\MoveSystem.h" />
-    <ClInclude Include="Source\ECS\Systems\RenderSystem.h" />
+    <ClInclude Include="Source\ECS\Systems\PlayerController.h" />
+    <ClInclude Include="Source\ECS\RenderSystems\DirectionalLightSystem.h" />
     <ClInclude Include="Source\ECS\Systems\InputSystem.h" />
-    <ClInclude Include="Source\ECS\Systems\ScriptSystem.h" />
+    <ClInclude Include="Source\ECS\Systems\BehaviorSystem.h" />
+    <ClInclude Include="Source\ECS\RenderSystems\ShadowRenderSystem.h" />
     <ClInclude Include="Source\Event\LuaEvent.h" />
     <ClInclude Include="Source\Event\EventManager.h" />
     <ClInclude Include="Source\Input\InputManager.h" />
     <ClInclude Include="Source\Log\Logger.h" />
+    <ClInclude Include="Source\Rendering\Buffers.h" />
     <ClInclude Include="Source\Rendering\Mesh.h" />
+    <ClInclude Include="Source\Rendering\RenderingPipeline.h" />
     <ClInclude Include="Source\Rendering\ShaderProgram.h" />
+    <ClInclude Include="Source\Rendering\Texture.h" />
     <ClInclude Include="Source\Scripting\ScriptManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Scripts\script.lua" />
     <None Include="Resources\Shaders\default.frag" />
     <None Include="Resources\Shaders\default.vert" />
+    <None Include="Resources\Shaders\shadowMapping.frag" />
+    <None Include="Resources\Shaders\shadowMapping.vert" />
+    <None Include="Resources\Shaders\shadowMappingDepth.frag" />
+    <None Include="Resources\Shaders\shadowMappingDepth.geom" />
+    <None Include="Resources\Shaders\shadowMappingDepth.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

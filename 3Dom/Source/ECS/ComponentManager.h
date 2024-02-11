@@ -14,6 +14,11 @@
 
 class ComponentManager {
 public:
+	static SingletonCamera& GetSingletonCamera() {
+		static SingletonCamera instance;
+		return instance;
+	}
+
 	// Add a component to an entity
 	template<typename TComponent, typename... TArgs>
 	TComponent* AddComponent(EntityId entity, TArgs&&... args);

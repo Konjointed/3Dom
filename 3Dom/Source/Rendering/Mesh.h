@@ -9,12 +9,12 @@
 
 struct Resources;
 
+// read for tangent and bitangent: https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 struct Vertex {
 	glm::vec3 position;
 	glm::vec3 normal;
 	glm::vec2 texCoords;
 	glm::vec3 color;
-	// https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
 };
