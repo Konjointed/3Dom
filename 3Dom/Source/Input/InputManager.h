@@ -7,8 +7,6 @@
 #include <SDL2/SDL_keycode.h>
 #include <SDL_mouse.h>
 
-#include "Event/LuaEvent.h"
-
 struct KeyPressEvent {
 	SDL_Keycode m_keycode;
 };
@@ -47,12 +45,6 @@ public:
 
 	glm::vec2 GetMouseDelta();
 	int GetMouseWheelDelta();
-
-	LuaEvent m_luaKeyPressEvent;
-	LuaEvent m_luaKeyReleaseEvent;
-	LuaEvent m_luaMouseButtonPressEvent;
-	LuaEvent m_luaMouseButtonReleaseEvent;
-	LuaEvent m_luaMouseMoveEvent;
 private:
 	int getDeltaMouseX();
 	int getDeltaMouseY();

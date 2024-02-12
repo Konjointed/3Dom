@@ -70,17 +70,14 @@ int InputManager::getDeltaMouseY()
     return m_currentMouseY - m_previousMouseY;
 }
 
-
 void InputManager::onKeyPressed(const KeyPressEvent& event)
 {
     m_keyState[event.m_keycode] = true;
-    m_luaKeyPressEvent(event.m_keycode);
 }
 
 void InputManager::onKeyReleased(const KeyReleaseEvent& event)
 {
     m_keyState[event.m_keycode] = false;
-    m_luaKeyReleaseEvent(event.m_keycode);
 }
 
 void InputManager::onMouseButtonPressed(const ButtonPressEvent& event)
