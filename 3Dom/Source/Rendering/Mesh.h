@@ -1,39 +1,39 @@
-#ifndef MESH_H
-#define MESH_H
+#include "Game.h"
 
-#include <string>
-#include <vector>
+#include "Resources.h"
 
-#include <Core/Math.h>
+#include "Log/Logger.h"
+#include "Core/Resources.h"
+#include "Scripting/ScriptManager.h"
+#include "Input/InputManager.h"
+#include "Event/EventManager.h"
+#include "ECS/EntityManager.h"
+#include "ECS/SystemManager.h"
+#include "Rendering/RenderingPipeline.h"
+#include "Rendering/Mesh.h"
+#include "Rendering/ShaderProgram.h"
 
-struct aiMesh;
-struct aiScene;
-struct aiNode;
+Game gGame;
 
-struct Vertex {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texCoords;
-	glm::vec3 color;
-	glm::vec3 tangent;
-	glm::vec3 bitangent;
-};
+int Game::Run(const char* title, int width, int height, bool fullscreen)
+{
+	if (!startup(title, width, height, fullscreen, gResources)) {
+		spdlog::error("Game start-up failed");
+		return -1;
+	}
 
-struct Mesh {
-	unsigned int vao, vbo, ebo;
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Mesh> subMeshes;
-};
+	glEnable(GL_DEPTH_TEST);
 
-class MeshLoader {
-public:
-	static void Load(const std::string& filepath, const std::string& name);
-private:
-	static Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	static std::vector<Mesh> processNode(aiNode* node, const aiScene* scene);
-};
+	float lastFrameTime = 0.0f;
+	while (!m_quit) {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			processSDLEvent(event);
+		}
 
-void LoadMesh(const std::string& filepath, const std::string& name);
+		float time = SDL_GetTicks() / 1000.0f;
+		float timestep = time - lastFrameTime;
+		lastFrameTime = time;
 
-#endif 
+		// FPS Counter
+		//static int frameCoun
