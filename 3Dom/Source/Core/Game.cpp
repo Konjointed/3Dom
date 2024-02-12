@@ -1,10 +1,19 @@
 #include "Game.h"
 
 #include "Log/Logger.h"
+#include "Core/Resources.h"
 #include "Event/EventManager.h"
 #include "Input/InputManager.h"
+#include "Rendering/Renderer.h"
+#include "Scene/Scene.h"
+#include "Rendering/Mesh.h"
+#include "Rendering/Shader.h"
+#include "Rendering/Texture.h"
 
 Game gGame;
+Resources gResources;
+Scene gScene;
+RendererData renderData;
 
 int Game::Run(const char* title, int width, int height, bool fullscreen)
 {
@@ -13,6 +22,11 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 	}
 
 	glEnable(GL_DEPTH_TEST);
+
+	loadResources();
+
+	CreateScene();
+	InitRender();
 
 	float lastFrameTime = 0.0f;
 	while (!m_quit) {
@@ -25,19 +39,10 @@ int Game::Run(const char* title, int width, int height, bool fullscreen)
 		float timestep = time - lastFrameTime;
 		lastFrameTime = time;
 
-		// FPS Counter
-		//static int frameCount = 0;
-		//static float totalTime = 0.0f;
-		// 
-		//totalTime += timestep;
-		//frameCount++;
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
-		//if (totalTime >= 1.0f) {
-		//	float fps = frameCount / totalTime;
-		//	std::cout << "FPS: " << fps << std::endl;
-		//	frameCount = 0;
-		//	totalTime = 0.0f;
-		//}	
+		ShadowPass();
+		LightingPass();
 
 		SDL_GL_SwapWindow(m_window);
 	}
@@ -149,4 +154,14 @@ void Game::processSDLEvent(SDL_Event& event)
 			break;
 		}
 	}
+}
+
+void Game::loadResources() {
+	LoadShaderProgram("default", "Resources/Shaders/default.vert", "Resources/Shaders/default.frag");
+	LoadShaderProgram("shadow", "Resources/Shaders/shadowMapping.vert", "Resources/Shaders/shadowMapping.frag");
+	LoadShaderProgram("depth", "Resources/Shaders/shadowMappingDepth.vert", "Resources/Shaders/shadowMappingDepth.frag", "Resources/Shaders/shadowMappingDepth.geom");
+	LoadMesh("Resources/Meshes/suzanne.obj", "suzanne");
+	LoadMesh("Resources/Meshes/cube.obj", "cube");
+	LoadTexture("Resources/Textures/wood.png", "wood");
+	LoadTexture("Resources/Textures/brickwall.jpg", "brick");
 }

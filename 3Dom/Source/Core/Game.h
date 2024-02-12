@@ -14,6 +14,7 @@ private:
 	bool initialize(const char* title, int width, int height, bool fullscreen);
 	void shutdown();
 	void processSDLEvent(SDL_Event& event);
+	void loadResources();
 private:
 	bool m_quit = false;
 	SDL_Window* m_window = nullptr;
