@@ -3,8 +3,6 @@
 #include "Log/Logger.h"
 #include "Event/EventManager.h"
 
-InputManager gInputManager;
-
 void InputManager::StartUp()
 {
     gEventManager.Connect<KeyPressEvent>(this, &InputManager::onKeyPressed);

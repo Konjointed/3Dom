@@ -14,6 +14,7 @@ struct Scene {
 
 void AddObject(GameObject* object);
 void CreateScene();
+void UpdateScene(float timestep);
 
 extern Scene gScene;
 

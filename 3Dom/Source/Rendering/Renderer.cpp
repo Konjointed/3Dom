@@ -139,7 +139,7 @@ void LightingPass()
 	{
 		program.SetUniformFloat("cascadePlaneDistances[" + std::to_string(i) + "]", renderData.mShadowCascadeLevels[i]);
 	}
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, renderData.mLightDepthMaps);
 	
 	for (auto& object : gScene.objects) {
